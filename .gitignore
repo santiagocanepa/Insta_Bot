@@ -4,7 +4,11 @@ cookies.json
 .env
 Embeddings/.env
 Embeddings/envnew
-cookies
+
 **/envnew
-dist
+dist/constants
+dist/functions/Follow
+dist/functions/Unfollow
+dist/functions/Utils/**.js
+dist/functions/**.js
 README3.md
