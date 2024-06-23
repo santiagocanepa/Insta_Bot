@@ -1,0 +1,62 @@
+import { join } from 'node:path'
+import { config } from 'dotenv'
+
+config()
+
+export const selectors = {
+  loginSelectors: {
+    usernameInput: 'input[aria-label="Phone number, username, or email"]',
+    passwordInput: 'input[aria-label="Password"',
+    isLoginSelector: 'span.xuxw1ft'
+  },
+  actionsSelectors: {
+
+    //Datos
+    username: 'div.x9f619 a._a6hd span._ap3a',
+    descriptionSpan: 'div.x9f619 span.x1lliihq.x193iq5w.x6ikm8r.x10wlt62.xlyipyv.xuxw1ft',
+
+    //Follow
+    followButton: 'div.x9f619 button._acan',
+
+    //unFollow
+    UnfollowProfileButton: 'div._ap3a._aaco._aacw._aad6._aade[dir="auto"]', // Selector para "Following"
+    confirmUnfollowProfileButton: 'span.x1lliihq.x193iq5w.x6ikm8r.x10wlt62.xlyipyv.xuxw1ft', // Selector para "Unfollowing"
+    unfollowListButton: 'div.xsz8vos[role="button"]',
+    confirmUnfollowListButton: 'button._a9-_',
+   
+    //followSelector: 'button._ap30[type="button"]',
+
+    //Follow List Button
+    followersButton: 'a[href*="/followers/"]',
+    followingButton: 'a[href*="/following/"]',
+    photoButton: 'a span:contains("personas más"), a span:contains("others"), a span:contains("likes")', // Añadido
+
+
+    //Follow Modals
+    outerModalSelector: 'div[role="dialog"]',
+    innerModalSelectorF: 'div.xyi19xy.x1ccrb07.xtf3nb5.x1pc53ja.x1lliihq.x1iyjqo2.xs83m0k.xz65tgg.x1rife3k.x1n2onr6',
+    innerModalSelectorPhoto: 'div.x9f619.xjbqb8w.x78zum5.x168nmei.x13lgxp2.x5pf9jr.xo71vjh.x1uhb9sk'
+    // TODO warningModalBtn: ''
+  }
+}
+
+
+export const credentials = {
+  username: process.env.USERNAME ?? 'unknown',
+  password: process.env.PASSWORD ?? 'unknown',
+  userTofollow: process.env.USER_TO_FOLLOW ?? 'unknown',
+  followersOrFollowing: process.env.FOLLOWERS_OR_FOLLOWING ?? 'unknown',
+  photo: process.env.PHOTO ?? 'unknown'
+}
+
+export const url = {
+  mainUrl: `https://www.instagram.com/`,
+  photoUrl: `https://www.instagram.com/${credentials.photo}`,
+  followUrl: `https://www.instagram.com/${credentials.userTofollow}`,
+  unfollowUrl: `https://www.instagram.com/${credentials.username}/following/`,
+  userUrl:`https://www.instagram.com/${credentials.username}/`
+}
+
+export const paths = {
+  cookiesPath: join(process.cwd(), 'cookies', 'cookies.json')
+}
