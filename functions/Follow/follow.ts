@@ -119,7 +119,7 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
           if (followCount >= nextBreakCount) {
             console.log(`Tomando un descanso después de ${followCount} follows`)
             await page.goto(url.userUrl) // Redirigir a la página de perfil
-            const breakTime = getHumanizedWaitTime(180000, 500000) // Esperar entre 180 y 500 segundos
+            const breakTime = getHumanizedWaitTime(240000, 800000) // Esperar entre 180 y 500 segundos
             console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
             await timer(breakTime)
 

@@ -89,7 +89,7 @@ export async function * unfollowGenerator (browser: Browser, page: Page, subActi
           if (unfollowCount >= nextBreakCount) {
             console.log(`Tomando un descanso después de ${unfollowCount} unfollows`)
             await page.goto(url.mainUrl) // Redirigir a la página de perfil
-            const breakTime = getHumanizedWaitTime(180000, 500000) // Esperar entre 180 y 500 segundos
+            const breakTime = getHumanizedWaitTime(230000, 800000) // Esperar 
             console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
             await timer(breakTime)
 
