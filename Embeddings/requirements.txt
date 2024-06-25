@@ -3,4 +3,6 @@ pandas
 numpy
 flask
 python-dotenv
+xgboost
 joblib
+

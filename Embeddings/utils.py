@@ -12,8 +12,8 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 openai.api_key = openai_api_key
 
 # Cargar los modelos entrenados
-model_gender_path = './modelGenderPredict.pkl'
-model_human_path = './modelHumanPredict.pkl'
+model_gender_path = '/home/santiago/Bots/Insta/Insta_Bot/Embeddings/modelGenderPredict.pkl'
+model_human_path = '/home/santiago/Bots/Insta/Insta_Bot/Embeddings/modelHumanPredict.pkl'
 clf_gender = joblib.load(model_gender_path)
 clf_human = joblib.load(model_human_path)
 
