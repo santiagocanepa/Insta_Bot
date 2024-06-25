@@ -24,7 +24,7 @@ def create_embeddings_batch(texts):
     return [item['embedding'] for item in response['data']]
 
 # Leer el archivo CSV final
-df_final = pd.read_csv('nombres_final.csv')
+df_final = pd.read_csv('final1.csv')
 
 # Dividir el DataFrame en lotes para procesar en partes
 batch_size = 100  # Ajusta el tamaño del lote según sea necesario

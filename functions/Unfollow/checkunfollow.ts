@@ -20,6 +20,8 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
   try {
     console.log(`Checking user: ${username}`)
     await page.goto(`${url.mainUrl}/${username}`)
+    await timer(3000)
+
     await page.waitForSelector(actionsSelectors.followingButton)
 
     // Click en el botón de followers
@@ -39,6 +41,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
     if (isFollowingBot) {
       saveUsernameUnfollowed(username)
       console.log(`El usuario ${username} sigue al bot`)
+      await timer(3000)
       await page.close()
       return true // No hacer unfollow
     }
@@ -48,7 +51,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
     if (closeButton) {
       await closeButton.click()
     }
-    await timer(2000) // Espera de 2 segundos después de hacer clic en el botón de unfollow
+    await timer(4000) // Espera de 2 segundos después de hacer clic en el botón de unfollow
 
     // Click en el botón de Unfollow
     const unfollowButton = await page.$(actionsSelectors.UnfollowProfileButton)

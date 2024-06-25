@@ -1,17 +1,16 @@
 import numpy as np
 import joblib
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 
-# Cargar el modelo entrenado
-clf_cargado = joblib.load('modelo_clasificacion_optimizados.pkl')
+best_clf = joblib.load('/kaggle/working/modelHumanPredict.pkl')
 
-# Cargar los conjuntos de prueba
-X_test = np.load('X_test.npy')
-y_test = np.load('y_test.npy')
+X_test = np.load('/kaggle/working/X_test.npy')
+y_test = np.load('/kaggle/working/y_test.npy')
 
-# Predecir en el conjunto de prueba
-y_pred = clf_cargado.predict(X_test)
+y_pred = best_clf.predict(X_test)
 
-# Evaluar la precisión del modelo
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy:.2f}")
+
+report = classification_report(y_test, y_pred)
+print(report)

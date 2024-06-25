@@ -1,37 +1,44 @@
 import numpy as np
 import joblib
-from sklearn.model_selection import GridSearchCV
+import optuna
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 import xgboost as xgb
+from optuna.integration import XGBoostPruningCallback
 
-# Cargar los conjuntos de entrenamiento
 X_train = np.load('/kaggle/working/X_train.npy')
 y_train = np.load('/kaggle/working/y_train.npy')
 
-# Definir el clasificador con soporte para GPU
-clf = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss', tree_method='hist', device='cuda')
+def objective(trial):
+    param = {
+        'tree_method': 'hist',
+        'device': 'cuda',
+        'lambda': trial.suggest_loguniform('lambda', 1e-3, 10.0),
+        'alpha': trial.suggest_loguniform('alpha', 1e-3, 10.0),
+        'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.7, 0.8, 0.9, 1.0]),
+        'subsample': trial.suggest_categorical('subsample', [0.7, 0.8, 0.9, 1.0]),
+        'learning_rate': trial.suggest_categorical('learning_rate', [0.01, 0.05, 0.1, 0.2]),
+        'n_estimators': trial.suggest_int('n_estimators', 80, 300),
+        'max_depth': trial.suggest_int('max_depth', 3, 6),
+        'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
+    }
+    
+    model = xgb.XGBClassifier(**param)
+    
+    model.fit(X_train, y_train, eval_set=[(X_train, y_train)], verbose=False, 
+              eval_metric='logloss', callbacks=[XGBoostPruningCallback(trial, "validation_0-logloss")])
+    
+    preds = model.predict(X_train)
+    accuracy = accuracy_score(y_train, preds)
+    
+    return accuracy
 
-# Definir el conjunto de hiperparámetros para probar
-param_grid = {
-    'n_estimators': [100, 200, 300],
-    'max_depth': [3, 4, 5, 6],
-    'learning_rate': [0.01, 0.1, 0.2],
-    'subsample': [0.7, 0.8, 0.9, 1.0],
-    'colsample_bytree': [0.7, 0.8, 0.9, 1.0]
-}
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=100)
 
-# Configurar Grid Search
-grid_search = GridSearchCV(estimator=clf, param_grid=param_grid, cv=5, scoring='accuracy', verbose=1, n_jobs=-1)
+print('Mejores parámetros encontrados: ', study.best_params)
 
-# Entrenar el modelo utilizando Grid Search
-grid_search.fit(X_train, y_train)
-
-# Imprimir los mejores parámetros
-print("Mejores parámetros encontrados:", grid_search.best_params_)
-
-# Entrenar el modelo final con los mejores parámetros
-best_clf = grid_search.best_estimator_
-best_clf.set_params(device='cuda')
+best_clf = xgb.XGBClassifier(**study.best_params)
 best_clf.fit(X_train, y_train)
 
-# Guardar el modelo entrenado
-joblib.dump(best_clf, '/kaggle/working/modelo_clasificacion_optimizados.pkl')
+joblib.dump(best_clf, '/kaggle/working/modelHumanPredict.pkl')
