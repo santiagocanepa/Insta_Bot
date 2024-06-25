@@ -12,17 +12,27 @@ export async function extractUsers(page: Page, modalSelector: string) {
 
   for (const grid of grids) {
     const followButton = await grid.$(actionsSelectors.followButton)
-    if (followButton) followButtons.push(followButton)
+    if (followButton) {
+      const buttonText = await page.evaluate((button: Element | null) => {
+        if (!(button instanceof HTMLElement)) {
+          return ''; // Return empty string if button is not HTMLElement
+        }
+        return button.textContent?.trim() || '';
+      }, followButton);
 
-    const username = await grid.$eval(actionsSelectors.username, el => el.textContent).catch(() => null)
-    if (username) usernames.push(username)
+      if (buttonText.toLowerCase() === 'follow') {
+        followButtons.push(followButton);
 
-    const description = await grid.$eval(actionsSelectors.descriptionSpan, el => el.textContent).catch(() => null)
-    if (description) descriptions.push(description)
+        const username = await grid.$eval(actionsSelectors.username, el => el.textContent).catch(() => null);
+        if (username) usernames.push(username);
+
+        const description = await grid.$eval(actionsSelectors.descriptionSpan, el => el.textContent).catch(() => null);
+        if (description) descriptions.push(description);
+      }
+    }
   }
 
-
-  return { followButtons, usernames, descriptions }
+  return { followButtons, usernames, descriptions };
 }
 
 export function filterNewUsers(usernames: string[], followButtons: any[], descriptions: (string | null)[], processedUsernames: Set<string>) {

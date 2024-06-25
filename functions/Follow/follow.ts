@@ -23,7 +23,7 @@ const processedUsernames = new Set<string>()
 const dailyFollowsPath = path.resolve(__dirname, '../../dailyfollows.json') // Asegurarse de que la ruta es correcta
 const followLimit = 120 // Ejemplo de límite diario asignable
 
-export async function * followGenerator (page: Page, action: 'followers' | 'following' | 'photo'): AsyncGenerator<GeneratorType, void, void> {
+export async function * followGenerator (page: Page, action: 'followers' | 'following' | 'photo', genero_buscado: number): AsyncGenerator<GeneratorType, void, void> {
   // Seleccionar la URL correcta
   const targetUrl = action === 'photo' ? url.photoUrl : url.followUrl
   await page.goto(targetUrl)
@@ -101,13 +101,14 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
           continue
         }
 
-        const embeddingResult = await embedding(description)
+        const embeddingResult = genero_buscado !== 2 ? await embedding(description) : 2; // Si genero_buscado es 2, asigna directamente 2 a embeddingResult
         console.log(`Embedding result for ${username}: ${embeddingResult}`)
+
 
         usernamesNoFollow.add(username)
         saveUsernameNoFollow(username)
-
-        if (embeddingResult === 1) {
+        
+        if (genero_buscado === 2 || embeddingResult === genero_buscado) {
           await btn.click()
           console.log(`Siguiendo a ${username}`)
           followCount++

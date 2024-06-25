@@ -19,9 +19,10 @@ async function askQuestion(question: string): Promise<string> {
   })
 }
 
-export async function selectAction (browser: Browser, page: Page): Promise<{ action: string, subAction?: string }> {
+export async function selectAction (browser: Browser, page: Page): Promise<{ action: string, subAction?: string, genero_buscado?: number }> {
   const action = await askQuestion('Select an action: \n 1. Follow \n 2. Unfollow \n 3. Exit \n')
-  let subAction
+
+  let subAction, genero_buscado
   switch (action) {
     case '1': {
       subAction = await askQuestion('Select follow type: \n 1. Followers \n 2. Following \n 3. Photo \n')
@@ -38,7 +39,10 @@ export async function selectAction (browser: Browser, page: Page): Promise<{ act
         default:
           subAction = undefined
       }
-      return { action: 'follow', subAction }
+      
+      genero_buscado = parseInt(await askQuestion('Select gender: \n 0. Men \n 1. Women \n 2. All \n 3. Businesses \n'), 10)
+      
+      return { action: 'follow', subAction, genero_buscado }
     }
     case '2': {
       subAction = await askQuestion('Select unfollow type: \n 1. All followed \n 2. Recent followers \n')
