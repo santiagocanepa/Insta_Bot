@@ -25,7 +25,7 @@ const followLimit = 120 // Ejemplo de límite diario asignable
 
 export async function * followGenerator (page: Page, action: 'followers' | 'following' | 'photo'): AsyncGenerator<GeneratorType, void, void> {
   // Seleccionar la URL correcta
-  const targetUrl = action === 'photo' ? url.photoUrl : url.userUrl
+  const targetUrl = action === 'photo' ? url.photoUrl : url.followUrl
   await page.goto(targetUrl)
   await timer()
 
@@ -127,7 +127,7 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
             nextBreakCount = getRandomWaitTime(7, 13) // Nuevo rango para el siguiente descanso
 
             // Seleccionar la URL correcta después del descanso
-            const returnUrl = action === 'photo' ? url.photoUrl : url.userUrl
+            const returnUrl = action === 'photo' ? url.photoUrl : url.followUrl
             await page.goto(returnUrl)
             await timer()
 
