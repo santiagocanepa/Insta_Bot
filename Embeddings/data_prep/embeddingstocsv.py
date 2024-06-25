@@ -24,7 +24,7 @@ def create_embeddings_batch(texts):
     return [item['embedding'] for item in response['data']]
 
 # Leer el archivo CSV final
-df_final = pd.read_csv('final1.csv')
+df_final = pd.read_csv('/home/santiago/Bots/Insta/Insta_Bot/Embeddings/data_prep/sustantivos.csv')
 
 # Dividir el DataFrame en lotes para procesar en partes
 batch_size = 100  # Ajusta el tamaño del lote según sea necesario
@@ -43,7 +43,7 @@ embeddings_text = [str(embed) for embed in embeddings]
 df_final['embedding'] = embeddings_text
 
 # Guardar los embeddings en un archivo CSV
-df_final.to_csv('nombres_final_embeddings.csv', index=False)
+df_final.to_csv('SustantivosEMbeddings.csv', index=False)
 
 print("Embeddings generados y guardados en 'nombres_final_embeddings.csv'")
            

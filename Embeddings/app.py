@@ -2,7 +2,7 @@ import openai
 import pandas as pd
 import numpy as np
 from flask import Flask, request, jsonify
-from utils1 import predecir_genero
+from utils import predecir_humano_o_genero
 import logging
 
 app = Flask(__name__)
@@ -14,9 +14,9 @@ def handle_predict_gender():
     data = request.get_json()
     nombre_usuario = data['nombre_usuario']
     try:
-        genero_predicho = predecir_genero(nombre_usuario)
-        logging.debug(f"Genero predicho: {genero_predicho}, Tipo: {type(genero_predicho)}")
-        return jsonify(genero=int(genero_predicho))  # Asegurarse de que el resultado sea un tipo básico
+        resultado = predecir_humano_o_genero(nombre_usuario)
+        logging.debug(f"Resultado: {resultado}, Tipo: {type(resultado)}")
+        return jsonify(genero=int(resultado))  # Asegurarse de que el resultado sea un tipo básico
     except Exception as e:
         logging.exception("Error processing request")
         return jsonify(error=str(e)), 500

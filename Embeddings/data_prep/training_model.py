@@ -1,44 +1,44 @@
 import numpy as np
 import joblib
-import optuna
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
 import xgboost as xgb
-from optuna.integration import XGBoostPruningCallback
 
+# Cargar los conjuntos de entrenamiento desde archivos .npy
 X_train = np.load('/kaggle/working/X_train.npy')
 y_train = np.load('/kaggle/working/y_train.npy')
 
-def objective(trial):
-    param = {
-        'tree_method': 'hist',
-        'device': 'cuda',
-        'lambda': trial.suggest_loguniform('lambda', 1e-3, 10.0),
-        'alpha': trial.suggest_loguniform('alpha', 1e-3, 10.0),
-        'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.7, 0.8, 0.9, 1.0]),
-        'subsample': trial.suggest_categorical('subsample', [0.7, 0.8, 0.9, 1.0]),
-        'learning_rate': trial.suggest_categorical('learning_rate', [0.01, 0.05, 0.1, 0.2]),
-        'n_estimators': trial.suggest_int('n_estimators', 80, 300),
-        'max_depth': trial.suggest_int('max_depth', 3, 6),
-        'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
-    }
-    
-    model = xgb.XGBClassifier(**param)
-    
-    model.fit(X_train, y_train, eval_set=[(X_train, y_train)], verbose=False, 
-              eval_metric='logloss', callbacks=[XGBoostPruningCallback(trial, "validation_0-logloss")])
-    
-    preds = model.predict(X_train)
-    accuracy = accuracy_score(y_train, preds)
-    
-    return accuracy
+# Definir el clasificador XGBoost con soporte para GPU y ajustes para reducir la memoria
+clf = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss', tree_method='gpu_hist')
 
-study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=100)
+# Definir la ponderación de clases inversamente proporcional
+weights = len(y_train) / (2 * np.bincount(y_train))
 
-print('Mejores parámetros encontrados: ', study.best_params)
+# Asignar los pesos de clase al clasificador
+clf.set_params(**{'scale_pos_weight': weights[1]})
 
-best_clf = xgb.XGBClassifier(**study.best_params)
+# Definir el conjunto de hiperparámetros para probar
+param_grid = {
+    'n_estimators': [50, 150],  # Reducir el número de árboles
+    'max_depth': [3, 5],        # Reducir la profundidad máxima
+    'learning_rate': [0.01, 0.1],
+    'subsample': [0.7, 0.8],
+    'colsample_bytree': [0.7, 0.8]
+}
+
+# Configurar Grid Search con un subconjunto de datos para optimización
+X_train_sub, _, y_train_sub, _ = train_test_split(X_train, y_train, test_size=0.8, random_state=42)
+
+grid_search = GridSearchCV(estimator=clf, param_grid=param_grid, cv=3, scoring='accuracy', verbose=1, n_jobs=-1)
+
+# Entrenar el modelo utilizando Grid Search
+grid_search.fit(X_train_sub, y_train_sub)
+
+# Imprimir los mejores parámetros encontrados
+print("Mejores parámetros encontrados:", grid_search.best_params_)
+
+# Entrenar el modelo final con los mejores parámetros en todos los datos de entrenamiento
+best_clf = grid_search.best_estimator_
 best_clf.fit(X_train, y_train)
 
+# Guardar el modelo entrenado
 joblib.dump(best_clf, '/kaggle/working/modelHumanPredict.pkl')

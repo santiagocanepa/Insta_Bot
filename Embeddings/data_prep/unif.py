@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Cargar los archivos CSV
-df1 = pd.read_csv('./final2.csv')
-df2 = pd.read_csv('./nombres_final_embeddings.csv')
+df1 = pd.read_csv('/home/santiago/Bots/Insta/Insta_Bot/Embeddings/NombresEmbeddingGenerosyHuman.csv')
+df2 = pd.read_csv('/home/santiago/Bots/Insta/Insta_Bot/Embeddings/data_prep/.CSV/SustantivosConEmbeddings.csv')
 
 # Unificar los dos DataFrames
 df_unificado = pd.concat([df1, df2], ignore_index=True)
@@ -15,6 +15,6 @@ print(df_unificado['embedding_length'])
 print(df_unificado.columns)
 
 # Guardar el archivo CSV unificado
-df_unificado.to_csv('archivo_unificado.csv', index=False)
+df_unificado.to_csv('CompletoConEmbedding(Human).csv', index=False)
 
 print("Archivo CSV unificado y guardado exitosamente.")
