@@ -50,11 +50,9 @@ export async function * unfollowGenerator (browser: Browser, page: Page, subActi
     const { followButtons, usernames } = await extractUsers(page, innerModalSelector)
     const { newFollowButtons, newUsernames } = filterNewUsers(usernames, followButtons, [], processedUsernames)
 
-    console.log(`Found ${newFollowButtons.length} new unfollow buttons`)
-    console.log(`Found ${newUsernames.length} new usernames`)
+
 
     if (newFollowButtons.length === 0) {
-      console.log('No new unfollow buttons found, scrolling down')
       const scrolled = await scrollModal(page, outerModalSelector, innerModalSelector)
       console.log(`Scrolled: ${scrolled}`)
       await timer(3000)
