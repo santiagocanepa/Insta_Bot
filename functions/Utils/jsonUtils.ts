@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename)
 // Funciones para la lista de follow
 // Funciones para la lista de nofollow
 export function getUsernamesNoFollow(): string[] {
-  const jsonPath = path.resolve(__dirname, './usernamesnofollow.json')
+  const jsonPath = path.resolve(__dirname, './usersFollowingAndGenderchek.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     return JSON.parse(data)
@@ -19,7 +19,7 @@ export function getUsernamesNoFollow(): string[] {
 }
 
 export function saveUsernameNoFollow(username: string): void {
-  const jsonPath = path.resolve(__dirname, './usernamesnofollow.json')
+  const jsonPath = path.resolve(__dirname, './usersFollowingAndGenderchek.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     const usernames = JSON.parse(data)
@@ -34,7 +34,7 @@ export function saveUsernameNoFollow(username: string): void {
 
 // Funciones para la lista de solo follow
 export function getUsernamesOnlyFollow(): string[] {
-  const jsonPath = path.resolve(__dirname, './usernamesonlyfollow.json')
+  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     return JSON.parse(data)
@@ -45,7 +45,7 @@ export function getUsernamesOnlyFollow(): string[] {
 }
 
 export function saveUsernameOnlyFollow(username: string): void {
-  const jsonPath = path.resolve(__dirname, './usernamesonlyfollow.json')
+  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     const usernames = JSON.parse(data)
@@ -60,7 +60,7 @@ export function saveUsernameOnlyFollow(username: string): void {
 
 // Funciones para la lista de unfollow
 export function getUsernamesUnfollowed(): string[] {
-  const jsonPath = path.resolve(__dirname, './usernamesunfollow.json')
+  const jsonPath = path.resolve(__dirname, './usersFollowingChekAndFollowers.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     return JSON.parse(data)
@@ -71,7 +71,7 @@ export function getUsernamesUnfollowed(): string[] {
 }
 
 export function saveUsernameUnfollowed(username: string): void {
-  const jsonPath = path.resolve(__dirname, './usernamesunfollow.json')
+  const jsonPath = path.resolve(__dirname, './usersFollowingChekAndFollowers.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     const usernames = JSON.parse(data)

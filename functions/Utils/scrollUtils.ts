@@ -12,3 +12,4 @@ export async function scrollModal(page: Page, outerModalSelector: string, innerM
   }, outerModalSelector, innerModalSelector)
   return scrolled
 }
+
