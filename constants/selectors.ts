@@ -35,8 +35,12 @@ export const selectors = {
     //Follow Modals
     outerModalSelector: 'div[role="dialog"]',
     innerModalSelectorF: 'div.xyi19xy.x1ccrb07.xtf3nb5.x1pc53ja.x1lliihq.x1iyjqo2.xs83m0k.xz65tgg.x1rife3k.x1n2onr6',
-    innerModalSelectorPhoto: 'div.x9f619.xjbqb8w.x78zum5.x168nmei.x13lgxp2.x5pf9jr.xo71vjh.x1uhb9sk'
-    // TODO warningModalBtn: ''
+    innerModalSelectorPhoto: 'div.x9f619.xjbqb8w.x78zum5.x168nmei.x13lgxp2.x5pf9jr.xo71vjh.x1uhb9sk',
+
+        //Interaction
+    ButtonLikes: 'svg[aria-label="Like"]',
+    NotificationsModal: "//button[contains(text(), 'Not Now')]" // Añadir el selector XPath
+    
   }
 }
 
@@ -49,14 +53,38 @@ export const credentials = {
   photo: process.env.PHOTO ?? 'unknown'
 }
 
+
+export const paths = {
+  cookiesPath: join(process.cwd(), 'cookies', 'cookies.json')
+}
+
+
+
+const paginasAdicionales: string[] = [
+  'https://www.google.com',
+  'https://www.linkedin.com',
+  'https://drive.google.com',
+  'https://mail.google.com',
+  'https://www.tradingview.com',
+  'https://www.github.com',
+  'https://www.youtube.com',
+  'https://www.twitter.com',
+  'https://www.reddit.com',
+  'https://www.amazon.com',
+];
+
+// Función para obtener una página aleatoria
+function obtenerPaginaAleatoria(): string {
+  const indiceAleatorio = Math.floor(Math.random() * paginasAdicionales.length);
+  return paginasAdicionales[indiceAleatorio];
+}
+
 export const url = {
   mainUrl: `https://www.instagram.com/`,
   photoUrl: `https://www.instagram.com/${credentials.photo}`,
   followUrl: `https://www.instagram.com/${credentials.userTofollow}`,
   unfollowUrl: `https://www.instagram.com/${credentials.username}/following/`,
-  userUrl:`https://www.instagram.com/${credentials.username}/`
-}
+  userUrl:`https://www.instagram.com/${credentials.username}/`,
+  urlRandom: obtenerPaginaAleatoria()
 
-export const paths = {
-  cookiesPath: join(process.cwd(), 'cookies', 'cookies.json')
 }

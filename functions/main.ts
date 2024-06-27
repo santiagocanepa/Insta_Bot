@@ -1,8 +1,9 @@
 import { Browser, Page } from 'puppeteer'
-import { selectAction, timer } from './Utils/utils.js'
+import { selectAction } from './Utils/utils.js'
+import { getHumanizedWaitTime } from './Utils/timeUtils.js'
 import { followGenerator } from './Follow/follow.js'
 import { unfollowGenerator } from './Unfollow/unfollow.js'
-
+import { browseAndInteractOnInstagram } from './Utils/interaction.js'
 async function main (browser: Browser, page: Page): Promise<void> {
   const { action, subAction, genero_buscado } = await selectAction(browser, page)
 
@@ -25,7 +26,7 @@ async function main (browser: Browser, page: Page): Promise<void> {
     for await (const value of generator) {
       switch (value.action) {
         case 'wait': {
-          await timer(60000, 120000)
+          await getHumanizedWaitTime(60000, 120000)
           break
         }
         case 'error': {

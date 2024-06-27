@@ -1,11 +1,6 @@
 import { Browser, Page } from 'puppeteer'
 import readline from 'readline'
 
-export const timer = (min: number = 3000, max: number = 9000): Promise<void> => {
-  const waitingTime = Math.floor(Math.random() * (max - min) + min)
-  return new Promise((resolve) => setTimeout(resolve, waitingTime))
-}
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout

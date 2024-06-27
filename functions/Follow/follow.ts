@@ -1,12 +1,13 @@
 import { Page } from 'puppeteer'
 import { GeneratorType } from '../../constants/types.js'
-import { timer } from '../Utils/utils.js'
+import {  } from '../Utils/utils.js'
 import { selectors, url } from '../../constants/selectors.js'
 import { embedding } from './embedding.js'
 import { getUsernamesNoFollow, saveUsernameNoFollow, saveUsernameOnlyFollow, updateDailyCount, checkDailyLimit } from '../Utils/jsonUtils.js'
 import { scrollModal } from '../Utils/scrollUtils.js'
 import { extractUsers, filterNewUsers } from './userUtils.js'
-import { getHumanizedWaitTime, getRandomWaitTime } from '../Utils/timeUtils.js'
+import { getHumanizedWaitTime, timer, getHumanizedNumber } from '../Utils/timeUtils.js'
+import { browseAndInteractOnInstagram } from '../Utils/interaction.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -27,7 +28,7 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
   // Seleccionar la URL correcta
   const targetUrl = action === 'photo' ? url.photoUrl : url.followUrl
   await page.goto(targetUrl)
-  await timer()
+  await getHumanizedWaitTime()
 
   // Seleccionar el botón y el modal selector correcto
   let buttonSelector: string | undefined
@@ -59,7 +60,7 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
     const button = await page.$(buttonSelector)
     if (button) {
       await button.click()
-      await timer()
+      await getHumanizedWaitTime()
     } else {
       throw new Error(`Button for ${action} not found`)
     }
@@ -70,7 +71,7 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
 
 
   let followCount = 0
-  let nextBreakCount = getRandomWaitTime(7, 13)
+  let nextBreakCount = getHumanizedNumber(7, 13)
 
   do {
     const { followButtons, usernames, descriptions } = await extractUsers(page, innerModalSelector)
@@ -79,15 +80,14 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
     if (newFollowButtons.length === 0) {
       const scrolled = await scrollModal(page, outerModalSelector, innerModalSelector)
       console.log(`Scrolled: ${scrolled}`)
-      await timer(3000)
       continue
     }
 
     try {
       for (let i = 0; i < newFollowButtons.length; i++) {
         if (checkDailyLimit(dailyFollowsPath, followLimit)) {
-          console.log(`Se ha llegado al límite de follows diarios (${followLimit}). Terminando el bot.`)
-          return
+          console.log(`Se ha llegado al límite de unfollows diarios (${followLimit}). Terminando el bot.`);
+          process.exit(1);
         }
 
         const btn = newFollowButtons[i]
@@ -119,25 +119,29 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
 
           if (followCount >= nextBreakCount) {
             console.log(`Tomando un descanso después de ${followCount} follows`)
-            await page.goto(url.userUrl) // Redirigir a la página de perfil
-            const breakTime = getHumanizedWaitTime(240000, 800000) // Esperar entre 180 y 500 segundos
-            console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
-            await timer(breakTime)
+            if (Math.random() < 0.6) {
+              await browseAndInteractOnInstagram(page);}
+            else {
+              await page.goto(url.urlRandom) // Redirigir a pagina random
+              const breakTime = getHumanizedNumber(230000, 750000, 0.8, 6, 0.4) // Esperar 
+              console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
+              await timer(breakTime) 
+            }
 
             followCount = 0
-            nextBreakCount = getRandomWaitTime(7, 13) // Nuevo rango para el siguiente descanso
+            nextBreakCount = getHumanizedNumber(7, 13,0.8,1,0) // Nuevo rango para el siguiente descanso
 
             // Seleccionar la URL correcta después del descanso
             const returnUrl = action === 'photo' ? url.photoUrl : url.followUrl
             await page.goto(returnUrl)
-            await timer()
+            await getHumanizedWaitTime()
 
             // Si no es acción 'photo', manejar el clic en el botón
             if (action !== 'photo') {
               const button = await page.$(buttonSelector!)
               if (button) {
                 await button.click()
-                await timer()
+                await getHumanizedWaitTime()
               } else {
                 throw new Error(`Button for ${action} not found`)
               }
@@ -145,8 +149,9 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
 
             await page.waitForSelector(outerModalSelector, { visible: true, timeout: 5000 })
             await page.waitForSelector(innerModalSelector, { visible: true, timeout: 5000 })
+
           } else {
-            const waitTime = getHumanizedWaitTime(5000, 35000) // Esperar entre 5 y 35 segundos
+            const waitTime = getHumanizedNumber(4000,14000,0.6,5,0.4)
             console.log(`Esperando ${waitTime / 1000} segundos antes de proceder con el siguiente usuario`)
             await timer(waitTime)
           }
