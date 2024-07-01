@@ -3,6 +3,7 @@ import { selectors } from '../../constants/selectors.js'
 import { getHumanizedWaitTime, getHumanizedNumber } from './timeUtils.js'
 import{ ScrollPage } from '../Utils/scrollUtils.js'
 import { handleLikes } from './LikesFeedForInteraction.js';
+import { LikesStoryForInteraction } from '../Utils/LikesStoryForInteraction.js'
 
 
 const ButtonLikes = selectors.actionsSelectors.ButtonLikes;
@@ -14,10 +15,10 @@ async function timer(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function browseAndInteractOnInstagram(page: Page) {
-  const breakTime = getHumanizedNumber(230000, 700000, 0.9, 1.8);
-  const startTime = Date.now();
-  const endTime = startTime + breakTime;
+  export async function browseAndInteractOnInstagram(page: Page) {
+    const breakTime = getHumanizedNumber(730000, 1700000, 0.9, 1.8);
+    const startTime = Date.now();
+    const endTime = startTime + breakTime;
 
   await page.goto('https://www.instagram.com');
   try {
@@ -45,7 +46,7 @@ export async function browseAndInteractOnInstagram(page: Page) {
 
 
     
-  if (Math.random() < 1) {
+  if (Math.random() < 0.4) {
   
     while (Date.now() < endTime) {
       await getHumanizedWaitTime(400, 4300, 0.7, 5);
@@ -80,6 +81,7 @@ export async function browseAndInteractOnInstagram(page: Page) {
                   return true;
               }
           }
+          
           console.log('No se encontró ningún botón con el texto en aria-label:', text);
           return false;
       }, ButtonStorySelector, labelText);
@@ -87,9 +89,10 @@ export async function browseAndInteractOnInstagram(page: Page) {
       if (!buttonFound) {
           throw new Error('No se encontró ningún botón con el texto "Story" en aria-label.');
       }
-  }
+    await LikesStoryForInteraction (page, endTime);
+    }
     
     
   } 
     console.log(`Esperando ${breakTime / 1000} segundos en la página de inicio de Instagram`);
-  }    
+}    

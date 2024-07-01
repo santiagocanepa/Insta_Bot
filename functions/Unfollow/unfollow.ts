@@ -45,7 +45,7 @@ export async function * unfollowGenerator (browser: Browser, page: Page, subActi
   await page.waitForSelector(innerModalSelector, { visible: true, timeout: 5000 })
 
   let unfollowCount = 0
-  let nextBreakCount = await getHumanizedNumber(7, 13)
+  let nextBreakCount = getHumanizedNumber(7, 13)
 
   do {
     const { followButtons, usernames } = await extractUsers(page, innerModalSelector)
