@@ -20,7 +20,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
   try {
     console.log(`Checking user: ${username}`)
     await page.goto(`${url.mainUrl}/${username}`)
-    await getHumanizedWaitTime(600,2800,0.7,1.1)
+    await getHumanizedWaitTime(900,4800,0.7,2,0.35)
     await page.waitForSelector(actionsSelectors.followingButton)
 
     // Click en el botón de followers
@@ -40,7 +40,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
     if (isFollowingBot) {
       saveusersFollowingChekAndFollowers(username)
       console.log(`El usuario ${username} sigue al bot`)
-      await getHumanizedWaitTime(2000,4000,0.7,1.1)
+      await getHumanizedWaitTime(700,2800,0.5,2,0.35)
       await page.close()
       return true // No hacer unfollow
     }
@@ -50,7 +50,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
     if (closeButton) {
       await closeButton.click()
     }
-    await getHumanizedWaitTime(1000,3000,0.7,1.1)
+    await getHumanizedWaitTime(900,3800,0.5,2,0.35)
 
     // Click en el botón de Unfollow
     const unfollowButton = await page.$(actionsSelectors.UnfollowProfileButton)
@@ -71,7 +71,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
       // Evaluar clic en el contexto de la página
       await page.evaluate(button => (button as unknown as HTMLElement).click(), confirmUnfollowButton)
       console.log(`El usuario ${username} ha sido dejado de seguir`)
-      await getHumanizedWaitTime(2000,4000,0.7,1.1)
+      await getHumanizedWaitTime(1200,4700,0.7,2,0.1)
       // Espera después de hacer clic en el botón de unfollow
       await page.close()
       return false // Hacer unfollow

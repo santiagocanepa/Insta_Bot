@@ -95,7 +95,7 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
               } else {
                 await page.goto(url.urlRandom)
                 const breakTime = getHumanizedNumber(230000, 750000, 0.8, 6, 0.4)
-                console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
+                console.log(`Esperando ${breakTime / 1000} segundos pagina random`)
                 await timer(breakTime)
               }
 
@@ -131,6 +131,7 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
     if (daysAgo === undefined) {
       throw new Error("Debe proporcionar 'daysAgo' para la opción 'recent'")
     }
+    await page.goto(url.urlRandom)
 
     const dateKey = getDateKey(daysAgo)
     const usernamesByDate = getUsernamesOnlyFollow()

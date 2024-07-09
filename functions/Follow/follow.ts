@@ -1,10 +1,11 @@
-import { Page } from 'puppeteer'
+import { Browser, Page } from 'puppeteer'
 import { GeneratorType } from '../../constants/types.js'
 import {  } from '../Utils/utils.js'
 import { selectors, url } from '../../constants/selectors.js'
 import { embedding } from './embedding.js'
 import { getusersFollowingAndGenderchek, saveusersFollowingAndGenderchek, saveUsernameOnlyFollow, updateDailyCount, checkDailyLimit } from '../Utils/jsonUtils.js'
 import { scrollModal } from '../Utils/scrollUtils.js'
+import { clickFollowUser } from './clickFollowUser.js'
 import { extractUsers, filterNewUsers } from './userUtils.js'
 import { getHumanizedWaitTime, timer, getHumanizedNumber } from '../Utils/timeUtils.js'
 import { browseAndInteractOnInstagram } from '../Utils/interaction.js'
@@ -24,7 +25,7 @@ const processedUsernames = new Set<string>()
 const dailyFollowsPath = path.resolve(__dirname, '../../dailyfollows.json') // Asegurarse de que la ruta es correcta
 const followLimit = 120 // Ejemplo de límite diario asignable
 
-export async function * followGenerator (page: Page, action: 'followers' | 'following' | 'photo', genero_buscado: number): AsyncGenerator<GeneratorType, void, void> {
+export async function * followGenerator (browser: Browser, page: Page, action: 'followers' | 'following' | 'photo', genero_buscado: number): AsyncGenerator<GeneratorType, void, void> {
   // Seleccionar la URL correcta
   const targetUrl = action === 'photo' ? url.photoUrl : url.followUrl
   await page.goto(targetUrl)
@@ -115,7 +116,8 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
         saveusersFollowingAndGenderchek(username)
         
         if (genero_buscado === 2 || embeddingResult === genero_buscado) {
-          await btn.click()
+//          await btn.click()
+          await clickFollowUser(browser, username)
           console.log(`Siguiendo a ${username}`)
           followCount++
           
