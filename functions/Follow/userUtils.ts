@@ -9,6 +9,7 @@ export async function extractUsers(page: Page, modalSelector: string) {
   const followButtons = [];
   const usernames = [];
   const descriptions = [];
+  const verifiedStatuses = [];
 
   for (const grid of grids) {
     const followButton = await grid.$(actionsSelectors.followButton);
@@ -30,27 +31,33 @@ export async function extractUsers(page: Page, modalSelector: string) {
           // Ensure that descriptions array stays in sync
           const description = await grid.$eval(actionsSelectors.descriptionSpan, el => el.textContent).catch(() => null);
           descriptions.push(description); // Always push, even if description is null
+
+          // Check if the user is verified
+          const isVerified = await grid.$eval('svg[aria-label="Verified"][role="img"]', () => true).catch(() => false);
+          verifiedStatuses.push(isVerified);
         }
       }
     }
   }
 
-  return { followButtons, usernames, descriptions };
+  return { followButtons, usernames, descriptions, verifiedStatuses };
 }
 
-export function filterNewUsers(usernames: string[], followButtons: any[], descriptions: (string | null)[], processedUsernames: Set<string>) {
+export function filterNewUsers(usernames: string[], followButtons: any[], descriptions: (string | null)[], verifiedStatuses: boolean[], processedUsernames: Set<string>) {
   const newFollowButtons = [];
   const newUsernames = [];
   const newDescriptions = [];
+  const newVerifiedStatuses = [];
 
   for (let i = 0; i < usernames.length; i++) {
     if (!processedUsernames.has(usernames[i])) {
       newFollowButtons.push(followButtons[i]);
       newUsernames.push(usernames[i]);
       newDescriptions.push(descriptions[i]);
+      newVerifiedStatuses.push(verifiedStatuses[i]);
       processedUsernames.add(usernames[i]);
     }
   }
 
-  return { newFollowButtons, newUsernames, newDescriptions };
+  return { newFollowButtons, newUsernames, newDescriptions, newVerifiedStatuses };
 }

@@ -14,7 +14,7 @@ async function askQuestion(question: string): Promise<string> {
   })
 }
 
-export async function selectAction (browser: Browser, page: Page): Promise<{ action: string, subAction?: string, genero_buscado?: number }> {
+export async function selectAction (browser: Browser, page: Page): Promise<{ action: string, subAction?: string, genero_buscado?: number,   daysAgo?: number;}> {
   const action = await askQuestion('Select an action: \n 1. Follow \n 2. Unfollow \n 3. Exit \n')
 
   let subAction, genero_buscado
@@ -40,19 +40,26 @@ export async function selectAction (browser: Browser, page: Page): Promise<{ act
       return { action: 'follow', subAction, genero_buscado }
     }
     case '2': {
-      subAction = await askQuestion('Select unfollow type: \n 1. All followed \n 2. Recent followers \n')
+      subAction = await askQuestion('Select unfollow type: \n 1. All followed \n 2. Recent followers \n');
       switch (subAction) {
         case '1':
-          subAction = 'all'
-          break
+          subAction = 'all';
+          return { action: 'unfollow', subAction };
         case '2':
-          subAction = 'recent'
-          break
+          subAction = 'recent';
+          const daysAgoString = await askQuestion('How many days back should we check the recent followers? (0 for today, 1 for yesterday, etc.): ');
+          const daysAgo = parseInt(daysAgoString, 10);
+          if (isNaN(daysAgo) || daysAgo < 0) {
+            console.log('Invalid number of days. Please enter a valid number.');
+            return { action: 'unfollow', subAction: undefined };
+          }
+          return { action: 'unfollow', subAction, daysAgo };
         default:
-          subAction = undefined
+          subAction = undefined;
       }
-      return { action: 'unfollow', subAction }
+      return { action: 'unfollow', subAction };
     }
+    
     case '3': {
       await browser.close()
       await page.close()

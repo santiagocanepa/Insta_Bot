@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename)
 
 // Funciones para la lista de follow
 // Funciones para la lista de nofollow
-export function getUsernamesNoFollow(): string[] {
+export function getusersFollowingAndGenderchek(): string[] {
   const jsonPath = path.resolve(__dirname, './usersFollowingAndGenderchek.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
@@ -18,7 +18,7 @@ export function getUsernamesNoFollow(): string[] {
   }
 }
 
-export function saveUsernameNoFollow(username: string): void {
+export function saveusersFollowingAndGenderchek(username: string): void {
   const jsonPath = path.resolve(__dirname, './usersFollowingAndGenderchek.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
@@ -33,33 +33,38 @@ export function saveUsernameNoFollow(username: string): void {
 }
 
 // Funciones para la lista de solo follow
-export function getUsernamesOnlyFollow(): string[] {
-  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json')
+export function getUsernamesOnlyFollow(): Record<string, string[]> {
+  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json');
   try {
-    const data = fs.readFileSync(jsonPath, 'utf-8')
-    return JSON.parse(data)
+    const data = fs.readFileSync(jsonPath, 'utf-8');
+    return JSON.parse(data);
   } catch (error) {
-    console.error(`Error reading JSON file at ${jsonPath}:`, error)
-    return []
+    console.error(`Error reading JSON file at ${jsonPath}:`, error);
+    return {};
   }
 }
 
 export function saveUsernameOnlyFollow(username: string): void {
-  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json')
+  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json');
+  const today = new Date().toLocaleDateString('es-ES'); // Formato DD/MM/AAAA
+
   try {
-    const data = fs.readFileSync(jsonPath, 'utf-8')
-    const usernames = JSON.parse(data)
+    const data = fs.readFileSync(jsonPath, 'utf-8');
+    const usernamesByDate = JSON.parse(data);
 
-    usernames.push(username)
+    if (!usernamesByDate[today]) {
+      usernamesByDate[today] = [];
+    }
+    usernamesByDate[today].push(username);
 
-    fs.writeFileSync(jsonPath, JSON.stringify(usernames, null, 2), 'utf-8')
+    fs.writeFileSync(jsonPath, JSON.stringify(usernamesByDate, null, 2), 'utf-8');
   } catch (error) {
-    console.error(`Error writing to JSON file at ${jsonPath}:`, error)
+    console.error(`Error writing to JSON file at ${jsonPath}:`, error);
   }
 }
 
 // Funciones para la lista de unfollow
-export function getUsernamesUnfollowed(): string[] {
+export function getusersFollowingChekAndFollowers(): string[] {
   const jsonPath = path.resolve(__dirname, './usersFollowingChekAndFollowers.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
@@ -70,7 +75,7 @@ export function getUsernamesUnfollowed(): string[] {
   }
 }
 
-export function saveUsernameUnfollowed(username: string): void {
+export function saveusersFollowingChekAndFollowers(username: string): void {
   const jsonPath = path.resolve(__dirname, './usersFollowingChekAndFollowers.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')

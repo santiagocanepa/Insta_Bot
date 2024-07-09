@@ -50,9 +50,16 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
 
   const extractUsername = async (): Promise<string | null> => {
     const username = await page.evaluate(() => {
-      const modalContainer = document.querySelector('div[style*="height: 737px;"]') as HTMLAreaElement;
+      const heights = ['737px', '864px', '900px']; // Añade aquí todas las alturas posibles
+      let modalContainer: HTMLDivElement | null = null;
+  
+      for (const height of heights) {
+        modalContainer = document.querySelector(`div[style*="height: ${height};"]`) as HTMLDivElement;
+        if (modalContainer) break;
+      }
+  
       if (modalContainer) {
-        const usernameSpan = modalContainer.querySelector('span.x1lliihq.x193iq5w.x6ikm8r.x10wlt62.xlyipyv.xuxw1ft') as HTMLAreaElement;
+        const usernameSpan = modalContainer.querySelector('span.x1lliihq.x193iq5w.x6ikm8r.x10wlt62.xlyipyv.xuxw1ft') as HTMLSpanElement;
         if (usernameSpan) {
           return usernameSpan.innerText.trim();
         }
@@ -126,7 +133,8 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
           await clickLikeButton();
         }
         DayLikeStoryList[dateKey].push(username);
-        saveListToFile(DayLikeStoryList, './DayLikeStoryList.json');
+        console.log(`Añadido ${username} a DayLikeStoryList.`);
+        saveListToFile(DayLikeStoryList, dayLikeStoryListPath);
       }
     }
     const nextClicked = await clickNextButton();

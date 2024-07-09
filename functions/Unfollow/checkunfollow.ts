@@ -1,6 +1,6 @@
 import { Page, Browser } from 'puppeteer'
 import { selectors, credentials, url } from '../../constants/selectors.js'
-import { saveUsernameUnfollowed } from '../Utils/jsonUtils.js'
+import { saveusersFollowingChekAndFollowers } from '../Utils/jsonUtils.js'
 import { getHumanizedWaitTime } from '../Utils/timeUtils.js'
 
 const { actionsSelectors } = selectors
@@ -38,7 +38,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
     const isFollowingBot = followerUsernames.includes(botUsername)
     console.log(`Does ${username} follow the bot (${botUsername})?`, isFollowingBot)
     if (isFollowingBot) {
-      saveUsernameUnfollowed(username)
+      saveusersFollowingChekAndFollowers(username)
       console.log(`El usuario ${username} sigue al bot`)
       await getHumanizedWaitTime(2000,4000,0.7,1.1)
       await page.close()

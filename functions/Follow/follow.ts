@@ -3,7 +3,7 @@ import { GeneratorType } from '../../constants/types.js'
 import {  } from '../Utils/utils.js'
 import { selectors, url } from '../../constants/selectors.js'
 import { embedding } from './embedding.js'
-import { getUsernamesNoFollow, saveUsernameNoFollow, saveUsernameOnlyFollow, updateDailyCount, checkDailyLimit } from '../Utils/jsonUtils.js'
+import { getusersFollowingAndGenderchek, saveusersFollowingAndGenderchek, saveUsernameOnlyFollow, updateDailyCount, checkDailyLimit } from '../Utils/jsonUtils.js'
 import { scrollModal } from '../Utils/scrollUtils.js'
 import { extractUsers, filterNewUsers } from './userUtils.js'
 import { getHumanizedWaitTime, timer, getHumanizedNumber } from '../Utils/timeUtils.js'
@@ -18,7 +18,7 @@ const { actionsSelectors } = selectors
 
 const outerModalSelector = actionsSelectors.outerModalSelector
 
-const usernamesNoFollow = new Set(getUsernamesNoFollow())
+const usernamesNoFollow = new Set(getusersFollowingAndGenderchek())
 const processedUsernames = new Set<string>()
 
 const dailyFollowsPath = path.resolve(__dirname, '../../dailyfollows.json') // Asegurarse de que la ruta es correcta
@@ -74,31 +74,37 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
   let nextBreakCount = getHumanizedNumber(7, 13)
 
   do {
-    const { followButtons, usernames, descriptions } = await extractUsers(page, innerModalSelector)
-    const { newFollowButtons, newUsernames, newDescriptions } = filterNewUsers(usernames, followButtons, descriptions, processedUsernames)
-
+    const { followButtons, usernames, descriptions, verifiedStatuses } = await extractUsers(page, innerModalSelector);
+    const { newFollowButtons, newUsernames, newDescriptions, newVerifiedStatuses } = filterNewUsers(usernames, followButtons, descriptions, verifiedStatuses, processedUsernames);
+  
     if (newFollowButtons.length === 0) {
-      const scrolled = await scrollModal(page, outerModalSelector, innerModalSelector)
-      console.log(`Scrolled: ${scrolled}`)
-      continue
+      const scrolled = await scrollModal(page, outerModalSelector, innerModalSelector);
+      console.log(`Scrolled: ${scrolled}`);
+      continue;
     }
-
+  
     try {
       for (let i = 0; i < newFollowButtons.length; i++) {
         if (checkDailyLimit(dailyFollowsPath, followLimit)) {
-          console.log(`Se ha llegado al límite de unfollows diarios (${followLimit}). Terminando el bot.`);
+          console.log(`Se ha llegado al límite de follows diarios (${followLimit}). Terminando el bot.`);
           process.exit(1);
         }
-
-        const btn = newFollowButtons[i]
-        const username = newUsernames[i]
-        const description = newDescriptions[i] ? newDescriptions[i]!.split(' ')[0] : 'No description'
-
-        console.log(`User: ${username}, Name: ${description}`)
-
+  
+        const btn = newFollowButtons[i];
+        const username = newUsernames[i];
+        const description = newDescriptions[i] ? newDescriptions[i]!.split(' ')[0] : 'No description';
+        const verified = newVerifiedStatuses[i];
+  
+        console.log(`User: ${username}, Name: ${description}, Verified: ${verified}`);
+  
+        if (verified) {
+          console.log(`${username} es una cuenta verificada, saltando...`);
+          continue;
+        }
+  
         if (usernamesNoFollow.has(username)) {
-          console.log(`${username} ya procesado, saltando..`)
-          continue
+          console.log(`${username} ya procesado, saltando...`);
+          continue;
         }
 
         const embeddingResult = genero_buscado !== 2 ? await embedding(description) : 2; // Si genero_buscado es 2, asigna directamente 2 a embeddingResult
@@ -106,7 +112,7 @@ export async function * followGenerator (page: Page, action: 'followers' | 'foll
 
 
         usernamesNoFollow.add(username)
-        saveUsernameNoFollow(username)
+        saveusersFollowingAndGenderchek(username)
         
         if (genero_buscado === 2 || embeddingResult === genero_buscado) {
           await btn.click()
