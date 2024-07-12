@@ -2,7 +2,7 @@ import { Page } from 'puppeteer'
 
 
 export async function scrollModal(page: Page, outerModalSelector: string, innerModalSelector: string): Promise<boolean> {
-  const scrolled = await page.evaluate((outerModalSelector, innerModalSelector) => {
+  const scrolled = await page.evaluate(async (outerModalSelector, innerModalSelector) => {
     const outerModal = document.querySelector(outerModalSelector);
     const innerModal = outerModal?.querySelector(innerModalSelector);
 
@@ -10,26 +10,22 @@ export async function scrollModal(page: Page, outerModalSelector: string, innerM
       const randomScroll = () => {
         const rand = Math.random();
         if (rand < 0.2) {
-          // 20% de probabilidad de scroll lento
           innerModal.scrollBy(0, innerModal.clientHeight * 0.8);
         } else if (rand < 0.4) {
-          // 20% de probabilidad de scroll hacia arriba
           innerModal.scrollBy(0, -innerModal.clientHeight * 1.8);
         } else if (rand < 0.6) {
-          // 20% de probabilidad de scroll medio hacia abajo
           innerModal.scrollBy(0, innerModal.clientHeight * 1.4);
         } else if (rand < 0.8) {
-          // 20% de probabilidad de scroll largo hacia arriba
           innerModal.scrollBy(0, -innerModal.clientHeight * 3.5);
         } else {
-          // 20% de probabilidad de scroll rápido
           innerModal.scrollBy(0, innerModal.clientHeight * 3);
         }
       };
 
-      // Realizar múltiples scrolleos
-      for (let i = 0; i < 3; i++) {
+      // Realizar múltiples scrolleos con espera
+      for (let i = 0; i < 6; i++) {  // Incrementar a 6 scrolleos
         randomScroll();
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 500)); // Espera entre 500ms y 1000ms
       }
 
       return true;
@@ -38,6 +34,7 @@ export async function scrollModal(page: Page, outerModalSelector: string, innerM
   }, outerModalSelector, innerModalSelector);
   return scrolled;
 }
+
 
 
 // scrollUtils.ts

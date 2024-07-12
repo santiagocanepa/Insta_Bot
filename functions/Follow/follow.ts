@@ -79,10 +79,14 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
     const { newFollowButtons, newUsernames, newDescriptions, newVerifiedStatuses } = filterNewUsers(usernames, followButtons, descriptions, verifiedStatuses, processedUsernames);
   
     if (newFollowButtons.length === 0) {
-      const scrolled = await scrollModal(page, outerModalSelector, innerModalSelector);
+      let scrolled = await scrollModal(page, outerModalSelector, innerModalSelector);
+      console.log(`Scrolled: ${scrolled}`);
+      await getHumanizedWaitTime(850, 3200, 0.5, 1.6, 0.15); // Espera 
+      scrolled = await scrollModal(page, outerModalSelector, innerModalSelector);
       console.log(`Scrolled: ${scrolled}`);
       continue;
     }
+    
   
     try {
       for (let i = 0; i < newFollowButtons.length; i++) {
@@ -127,7 +131,7 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
 
           if (followCount >= nextBreakCount) {
             console.log(`Tomando un descanso después de ${followCount} follows`)
-            if (Math.random() < 0.6) {
+            if (Math.random() < 0.4) {
               await browseAndInteractOnInstagram(page);}
             else {
               await page.goto(url.urlRandom) // Redirigir a pagina random
