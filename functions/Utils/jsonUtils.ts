@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename)
 // Funciones para la lista de follow
 // Funciones para la lista de nofollow
 export function getusersFollowingAndGenderchek(): string[] {
-  const jsonPath = path.resolve(__dirname, './usersFollowingAndGenderchek.json')
+  const jsonPath = path.resolve(__dirname, '../List/usersFollowingAndGenderchek.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     return JSON.parse(data)
@@ -19,7 +19,7 @@ export function getusersFollowingAndGenderchek(): string[] {
 }
 
 export function saveusersFollowingAndGenderchek(username: string): void {
-  const jsonPath = path.resolve(__dirname, './usersFollowingAndGenderchek.json')
+  const jsonPath = path.resolve(__dirname, '../List/usersFollowingAndGenderchek.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     const usernames = JSON.parse(data)
@@ -34,7 +34,7 @@ export function saveusersFollowingAndGenderchek(username: string): void {
 
 // Funciones para la lista de solo follow
 export function getUsernamesOnlyFollow(): Record<string, string[]> {
-  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json');
+  const jsonPath = path.resolve(__dirname, '../List/usersOnlyFollowing.json');
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8');
     return JSON.parse(data);
@@ -45,7 +45,7 @@ export function getUsernamesOnlyFollow(): Record<string, string[]> {
 }
 
 export function saveUsernameOnlyFollow(username: string): void {
-  const jsonPath = path.resolve(__dirname, './usersOnlyFollowing.json');
+  const jsonPath = path.resolve(__dirname, '../List/usersOnlyFollowing.json');
   const today = new Date().toLocaleDateString('es-ES'); // Formato DD/MM/AAAA
 
   try {
@@ -65,7 +65,7 @@ export function saveUsernameOnlyFollow(username: string): void {
 
 // Funciones para la lista de unfollow
 export function getusersFollowingChekAndFollowers(): string[] {
-  const jsonPath = path.resolve(__dirname, './usersFollowingChekAndFollowers.json')
+  const jsonPath = path.resolve(__dirname, '../List/usersFollowingChekAndFollowers.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     return JSON.parse(data)
@@ -76,7 +76,7 @@ export function getusersFollowingChekAndFollowers(): string[] {
 }
 
 export function saveusersFollowingChekAndFollowers(username: string): void {
-  const jsonPath = path.resolve(__dirname, './usersFollowingChekAndFollowers.json')
+  const jsonPath = path.resolve(__dirname, '../List/usersFollowingChekAndFollowers.json')
   try {
     const data = fs.readFileSync(jsonPath, 'utf-8')
     const usernames = JSON.parse(data)
