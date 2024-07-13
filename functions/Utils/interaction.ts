@@ -16,7 +16,7 @@ async function timer(ms: number) {
 }
 
   export async function browseAndInteractOnInstagram(page: Page) {
-    const breakTime = getHumanizedNumber(300000, 930000, 0.9, 1.8);
+    const breakTime = getHumanizedNumber(300000, 730000, 0.9, 1.8, 0.1);
     const startTime = Date.now();
     const endTime = startTime + breakTime;
 

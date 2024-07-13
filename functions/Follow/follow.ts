@@ -135,13 +135,13 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
               await browseAndInteractOnInstagram(page);}
             else {
               await page.goto(url.urlRandom) // Redirigir a pagina random
-              const breakTime = getHumanizedNumber(230000, 750000, 0.8, 6, 0.4) // Esperar 
+              const breakTime = getHumanizedNumber(230000, 750000, 0.8, 4, 0.2) // Esperar 
               console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
               await timer(breakTime) 
             }
 
             followCount = 0
-            nextBreakCount = getHumanizedNumber(7, 13,0.8,1,0) // Nuevo rango para el siguiente descanso
+            nextBreakCount = getHumanizedNumber(7, 14,0.8,1,0) // Nuevo rango para el siguiente descanso
 
             // Seleccionar la URL correcta después del descanso
             const returnUrl = action === 'photo' ? url.photoUrl : url.followUrl
