@@ -1,24 +1,22 @@
 import { Page } from 'puppeteer';
 import { getHumanizedWaitTime } from './timeUtils.js';
 import * as fs from 'fs';
-import { selectors, url, } from '../../constants/selectors.js';
 import * as path from 'path';
+import { selectors, url } from '../../constants/selectors.js';
 
-
-const dayLikeStoryListPath = './functions/List/NoLikeStoryList.json';
-const noLikeStoryListPath = './functions/List/NoLikeStoryList.json';
+const dayLikeStoryListPath = 'dist/functions/List/DayLikeStoryList.json';
+const noLikeStoryListPath = 'dist/functions/List/NoLikeStoryList.json';
 
 let DayLikeStoryList: { [date: string]: string[] } = {};
 let NoLikeStoryList: string[] = [];
 
 if (fs.existsSync(dayLikeStoryListPath)) {
-    DayLikeStoryList = JSON.parse(fs.readFileSync(dayLikeStoryListPath, 'utf8'));
-  }
-  
+  DayLikeStoryList = JSON.parse(fs.readFileSync(dayLikeStoryListPath, 'utf8'));
+}
+
 if (fs.existsSync(noLikeStoryListPath)) {
-    NoLikeStoryList = JSON.parse(fs.readFileSync(noLikeStoryListPath, 'utf8'));
-  }
-  
+  NoLikeStoryList = JSON.parse(fs.readFileSync(noLikeStoryListPath, 'utf8'));
+}
 
 // Función para obtener la fecha actual en formato dd/mm/yy
 const getCurrentDate = (): string => {
@@ -29,7 +27,6 @@ const getCurrentDate = (): string => {
   return `${dd}/${mm}/${yy}`;
 };
 
-
 // Función para guardar la lista en un archivo JSON
 const saveListToFile = (list: object, filePath: string) => {
   const dir = path.dirname(filePath);
@@ -38,7 +35,6 @@ const saveListToFile = (list: object, filePath: string) => {
   }
   fs.writeFileSync(filePath, JSON.stringify(list, null, 2));
 };
-
 
 const LikesStoryForInteraction = async (page: Page, endTime: number) => {
   const dateKey = getCurrentDate();
@@ -52,12 +48,12 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
     const username = await page.evaluate(() => {
       const heights = ['737px', '864px', '900px']; // Añade aquí todas las alturas posibles
       let modalContainer: HTMLDivElement | null = null;
-  
+
       for (const height of heights) {
         modalContainer = document.querySelector(`div[style*="height: ${height};"]`) as HTMLDivElement;
         if (modalContainer) break;
       }
-  
+
       if (modalContainer) {
         const usernameSpan = modalContainer.querySelector('span.x1lliihq.x193iq5w.x6ikm8r.x10wlt62.xlyipyv.xuxw1ft') as HTMLSpanElement;
         if (usernameSpan) {
@@ -83,13 +79,10 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
 
   const clickNextButton = async (): Promise<boolean> => {
     return await page.evaluate(() => {
-      const nextSvg = document.querySelector('svg[aria-label="Next"]');
-      if (nextSvg) {
-        const buttonAncestor = nextSvg.closest('[role="button"]') as HTMLElement;
-        if (buttonAncestor) {
-          buttonAncestor.click();
-          return true;
-        }
+      const nextButton = document.querySelector('button[aria-label="Next"]') as HTMLElement;
+      if (nextButton) {
+        nextButton.click();
+        return true;
       }
       return false;
     });
@@ -115,7 +108,7 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
 
   // Bucle principal
   while (Date.now() < endTime) {
-    await getHumanizedWaitTime(2000,4500);
+    await getHumanizedWaitTime(600, 2500);
 
     const username = await extractUsername();
     if (!username) {
@@ -123,29 +116,43 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
       continue;
     }
 
-    if (NoLikeStoryList.includes(username)) {
-      console.log(`Usuario ${username} ya está en NoLikeStoryList.`);
-    } else {
-      // Comprobar si el usuario ya ha sido registrado hoy
-      if (!DayLikeStoryList[dateKey].includes(username)) {
-        // Definir probabilidad de dar like
-        if (Math.random() < 0.6) {
-          await clickLikeButton();
-        }
-        DayLikeStoryList[dateKey].push(username);
-        console.log(`Añadido ${username} a DayLikeStoryList.`);
-        saveListToFile(DayLikeStoryList, dayLikeStoryListPath);
+    // Nuevo if inicial
+    if (username.includes("Sponsored")) {
+      const nextClicked = await clickNextButton();
+      if (!nextClicked) {
+        console.log("No hay más publicaciones. Cerrando el modal.");
+        await clickCloseButton();
+        await getHumanizedWaitTime();
+        return;
       }
-    }
-    const nextClicked = await clickNextButton();
-    if (!nextClicked) {
-      console.log("No hay más publicaciones. Cerrando el modal.");
-      await clickCloseButton();
       await getHumanizedWaitTime();
-      return;
-    }
-    await getHumanizedWaitTime();
-  }
-};
+    } else {
+      // La lógica existente solo se ejecutará si el username no incluye "Sponsored"
+      if (NoLikeStoryList.includes(username)) {
+        console.log(`Usuario ${username} ya está en NoLikeStoryList.`);
+      } else {
+        // Comprobar si el usuario ya ha sido registrado hoy
+        if (!DayLikeStoryList[dateKey].includes(username)) {
+          // Definir probabilidad de dar like
+          if (Math.random() < 0.15) {
+            await clickLikeButton();
+          }
+          DayLikeStoryList[dateKey].push(username);
+          console.log(`Añadido ${username} a DayLikeStoryList.`);
+          saveListToFile(DayLikeStoryList, dayLikeStoryListPath);
+        }
+      }
 
-export { LikesStoryForInteraction };
+      const nextClicked = await clickNextButton();
+      if (!nextClicked) {
+        console.log("No hay más publicaciones. Cerrando el modal.");
+        await clickCloseButton();
+        await getHumanizedWaitTime();
+        return;
+      }
+      await getHumanizedWaitTime();
+    }
+  }
+    };
+
+    export { LikesStoryForInteraction };
