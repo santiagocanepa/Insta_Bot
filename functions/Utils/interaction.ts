@@ -46,7 +46,7 @@ async function timer(ms: number) {
 
 
     
-  if (Math.random() < 1) {
+  if (Math.random() < 0) {
   
     while (Date.now() < endTime) {
       await getHumanizedWaitTime(400, 4300, 0.7, 5);
@@ -68,6 +68,8 @@ async function timer(ms: number) {
       const labelText = 'Story'; // Parte del texto estático que deseas buscar
       const ButtonStorySelector = 'button[aria-label*="Story"]';
       // Espera a que se carguen los botones
+      await getHumanizedWaitTime(3100, 4800, 0.7, 5);
+
       await page.waitForSelector(ButtonStorySelector);
 
       // Evalúa en el contexto de la página para encontrar y hacer clic en el botón
@@ -89,7 +91,7 @@ async function timer(ms: number) {
       if (!buttonFound) {
           throw new Error('No se encontró ningún botón con el texto "Story" en aria-label.');
       }
-    await LikesStoryForInteraction (page, endTime);
+      await LikesStoryForInteraction (page, endTime);
     }
     
     

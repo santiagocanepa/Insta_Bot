@@ -31,7 +31,7 @@ export async function handleLikes(page: Page, reviewedButtonsArray: string[], ne
       console.log('Elemento SVG de like encontrado:', svgElementId);
       const parentButton = svgElement.closest('div[role="button"], button') as HTMLElement;
       if (parentButton) {
-        if (Math.random() < 0.75) {
+        if (Math.random() < 0.25) {
           console.log('Botón padre encontrado:', parentButton);
           parentButton.scrollIntoView();
           parentButton.click();

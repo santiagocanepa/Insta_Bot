@@ -1,31 +1,31 @@
-import { Browser, Page } from 'puppeteer'
-import { selectAction } from './Utils/utils.js'
-import { getHumanizedWaitTime } from './Utils/timeUtils.js'
-import { followGenerator } from './Follow/follow.js'
-import { unfollowGenerator } from './Unfollow/unfollow.js'
-import { browseAndInteractOnInstagram } from './Utils/interaction.js'
-async function main (browser: Browser, page: Page): Promise<void> {
+import { Browser, Page } from 'puppeteer';
+import { selectAction } from './Utils/utils.js';
+import { getHumanizedWaitTime } from './Utils/timeUtils.js';
+import { followGenerator } from './Follow/follow.js';
+import { unfollowGenerator } from './Unfollow/unfollow.js';
+import { browseAndInteractOnInstagram } from './Utils/interaction.js';
 
-  const { action, subAction, genero_buscado, daysAgo } = await selectAction(browser, page)
-  let generator
+async function main(browser: Browser, page: Page): Promise<void> {
+  const { action, subAction, genero_buscado, daysAgo } = await selectAction(browser, page);
+  let generator;
+
   if (action === 'follow') {
     if (!subAction || genero_buscado === undefined) {
-      console.log('Invalid follow type selected.')
-      return
+      console.log('Invalid follow type selected.');
+      return;
     }
-    generator = followGenerator(browser, page, subAction as 'followers' | 'following' | 'photo', genero_buscado)
+    generator = followGenerator(browser, page, subAction as 'followers' | 'following' | 'photo', genero_buscado);
   } else if (action === 'unfollow') {
     if (!subAction) {
       console.log('Invalid unfollow type selected.');
       return;
     }
-    let generator;
 
     if (subAction === 'recent') {
       generator = unfollowGenerator(browser, page, subAction as 'recent', daysAgo);
     } else {
       generator = unfollowGenerator(browser, page, subAction as 'all');
-      }
+    }
   }
 
   if (generator) {
@@ -47,10 +47,9 @@ async function main (browser: Browser, page: Page): Promise<void> {
     }
   }
 
-  await page.close()
-  await browser.close()
+  // Estas líneas no deberían cerrarse automáticamente si no se ha completado la acción
+  await page.close();
+  await browser.close();
 }
-  
 
-
-export default main
+export default main;

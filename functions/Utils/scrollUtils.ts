@@ -1,4 +1,5 @@
 import { Page } from 'puppeteer'
+import { getHumanizedWaitTime, getHumanizedNumber } from './timeUtils.js'
 
 
 export async function scrollModal(page: Page, outerModalSelector: string, innerModalSelector: string): Promise<boolean> {
@@ -9,23 +10,23 @@ export async function scrollModal(page: Page, outerModalSelector: string, innerM
     if (innerModal) {
       const randomScroll = () => {
         const rand = Math.random();
-        if (rand < 0.2) {
-          innerModal.scrollBy(0, innerModal.clientHeight * 0.8);
+        if (rand < 0.35) {
+          innerModal.scrollBy(0, innerModal.clientHeight * 1.2);
         } else if (rand < 0.4) {
-          innerModal.scrollBy(0, -innerModal.clientHeight * 1.8);
+          innerModal.scrollBy(0, -innerModal.clientHeight * 0.45);
         } else if (rand < 0.6) {
-          innerModal.scrollBy(0, innerModal.clientHeight * 1.4);
-        } else if (rand < 0.8) {
-          innerModal.scrollBy(0, -innerModal.clientHeight * 3.5);
+          innerModal.scrollBy(0, innerModal.clientHeight * 1.9);
+        } else if (rand < 0.35) {
+          innerModal.scrollBy(0, -innerModal.clientHeight * 0.62);
         } else {
-          innerModal.scrollBy(0, innerModal.clientHeight * 3);
+          innerModal.scrollBy(0, innerModal.clientHeight * 2.8);
         }
       };
 
       // Realizar múltiples scrolleos con espera
-      for (let i = 0; i < 6; i++) {  // Incrementar a 6 scrolleos
+      for (let i = 0; i < 5; i++) {  // Incrementar a 6 scrolleos
         randomScroll();
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 500)); // Espera entre 500ms y 1000ms
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 400)); // Espera entre 500ms y 1000ms
       }
 
       return true;
