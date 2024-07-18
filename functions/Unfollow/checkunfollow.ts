@@ -88,7 +88,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
         // Evaluar clic en el contexto de la página
         await page.evaluate(button => (button as unknown as HTMLElement).click(), confirmUnfollowButton);
         console.log(`El usuario ${username} ha sido dejado de seguir`);
-        await getHumanizedWaitTime(1200, 4700, 0.7, 2, 0.1);
+        await getHumanizedWaitTime(2200, 5700, 0.7, 2, 0.1);
         // Espera después de hacer clic en el botón de unfollow
         await page.close();
         return false; // Hacer unfollow

@@ -19,10 +19,11 @@ export const selectors = {
     followButton: 'div.x9f619 button._acan',
 
     //unFollow
-    UnfollowProfileButton: 'div._ap3a._aaco._aacw._aad6._aade[dir="auto"]', // Selector para "Following"
+    UnfollowProfileButton: 'div._ap3a._aaco._aacw._aad6._aade[dir="auto"]:contains("Following")', // Selector para "Following"
     confirmUnfollowProfileButton: 'span.x1lliihq.x193iq5w.x6ikm8r.x10wlt62.xlyipyv.xuxw1ft', // Selector para "Unfollowing"
     unfollowListButton: 'div.xsz8vos[role="button"]',
     confirmUnfollowListButton: 'button._a9-_',
+    usernameSelector : 'div[role="dialog"] div.x1dm5mii.x16mil14.xiojian.x1yutycm.x1lliihq.x193iq5w.xh8yej3 a._a6hd span._ap3a',
    
     //followSelector: 'button._ap30[type="button"]',
 
@@ -50,7 +51,8 @@ export const credentials = {
   password: process.env.PASSWORD ?? 'unknown',
   userTofollow: process.env.USER_TO_FOLLOW ?? 'unknown',
   followersOrFollowing: process.env.FOLLOWERS_OR_FOLLOWING ?? 'unknown',
-  photo: process.env.PHOTO ?? 'unknown'
+  photo: process.env.PHOTO ?? 'unknown',
+  UserCheck: process.env.USERCHECK ?? 'unknown'
 }
 
 

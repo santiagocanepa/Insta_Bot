@@ -85,12 +85,13 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
             const shouldUnfollow = await checkUnfollow(browser, username);
 
             if (shouldUnfollow) {
-              const waitTime = getHumanizedNumber(2000, 4000, 0.7, 4);
+              const waitTime = getHumanizedNumber(2400, 8500, 0.7, 4);
               console.log(`Waiting ${waitTime / 1000} seconds before proceeding to the next user`);
               await timer(waitTime);
             } else {
               unfollowCount++;
               updateDailyCount(dailyUnfollowsPath);
+              await getHumanizedWaitTime(6800, 28000, 0.5, 3, 0.3);
 
               if (unfollowCount >= nextBreakCount) {
                 console.log(`Taking a break after ${unfollowCount} unfollows`);

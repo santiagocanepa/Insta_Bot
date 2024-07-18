@@ -24,9 +24,9 @@ export async function scrollModal(page: Page, outerModalSelector: string, innerM
       };
 
       // Realizar múltiples scrolleos con espera
-      for (let i = 0; i < 5; i++) {  // Incrementar a 6 scrolleos
+      for (let i = 0; i < 2; i++) {  // Incrementar a 6 scrolleos
         randomScroll();
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 400)); // Espera entre 500ms y 1000ms
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 800 + 2100)); // Espera entre 500ms y 1000ms
       }
 
       return true;

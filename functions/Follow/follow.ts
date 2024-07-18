@@ -82,8 +82,6 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
       let scrolled = await scrollModal(page, outerModalSelector, innerModalSelector);
       console.log(`Scrolled: ${scrolled}`);
       await getHumanizedWaitTime(350, 3200, 0.5, 1.6, 0.15); // Espera 
-      scrolled = await scrollModal(page, outerModalSelector, innerModalSelector);
-      console.log(`Scrolled: ${scrolled}`);
       continue;
     }
     
