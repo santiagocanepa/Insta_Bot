@@ -1,7 +1,7 @@
 import { Browser, Page } from 'puppeteer'
 import { GeneratorType } from '../../constants/types.js'
 import {  } from '../Utils/utils.js'
-import { selectors, url } from '../../constants/selectors.js'
+import { selectors, url, credentials } from '../../constants/selectors.js'
 import { embedding } from './embedding.js'
 import { getusersFollowingAndGenderchek, saveusersFollowingAndGenderchek, saveUsernameOnlyFollow, updateDailyCount, checkDailyLimit } from '../Utils/jsonUtils.js'
 import { scrollModal } from '../Utils/scrollUtils.js'
@@ -125,11 +125,11 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
 
           if (followCount >= nextBreakCount) {
             console.log(`Tomando un descanso después de ${followCount} follows`)
-            if (Math.random() < 0.4) {
+            if (Math.random() < credentials.probInteractions) {
               await browseAndInteractOnInstagram(page)
             } else {
               await page.goto(url.urlRandom) // Redirigir a pagina random
-              const breakTime = getHumanizedNumber(230000, 730000, 0.8, 4, 0.2) // Esperar 
+              const breakTime = getHumanizedNumber(230000, 750000, 0.6, 5, 0.25);
               console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
               await timer(breakTime)
             }

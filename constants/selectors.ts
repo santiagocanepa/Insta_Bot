@@ -52,7 +52,9 @@ export const credentials = {
   userTofollow: process.env.USER_TO_FOLLOW ?? 'unknown',
   followersOrFollowing: process.env.FOLLOWERS_OR_FOLLOWING ?? 'unknown',
   photo: process.env.PHOTO ?? 'unknown',
-  UserCheck: process.env.USERCHECK ?? 'unknown'
+  UserCheck: process.env.USERCHECK ?? 'unknown',
+  probInteracciones: parseFloat(process.env.PROB_INTERACTIONS ?? '0.15'),
+  probFeedOHistoria: parseFloat(process.env.PROB_FEED_OR_STORIES ?? '0.15')
 }
 
 

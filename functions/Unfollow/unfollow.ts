@@ -1,6 +1,6 @@
 import { Page, Browser } from 'puppeteer';
 import { GeneratorType } from '../../constants/types.js';
-import { selectors, url } from '../../constants/selectors.js';
+import { selectors, url, credentials } from '../../constants/selectors.js';
 import { getusersFollowingChekAndFollowers, getUsersRequestPendientes, getUserUnfollowed, saveusersFollowingAndGenderchek, updateDailyCount, checkDailyLimit, getUsernamesOnlyFollow } from '../Utils/jsonUtils.js';
 import { scrollModal } from '../Utils/scrollUtils.js';
 import { extractUsers, filterNewUsers } from './userUtils.js';
@@ -107,11 +107,11 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
 
               if (unfollowCount >= nextBreakCount) {
                 console.log(`Taking a break after ${unfollowCount} unfollows`);
-                if (Math.random() < 0.6) {
+                if (Math.random() < credentials.probInteractions) {
                   await browseAndInteractOnInstagram(page);
                 } else {
                   await page.goto(url.urlRandom);
-                  const breakTime = getHumanizedNumber(230000, 750000, 0.8, 6, 0.4);
+                  const breakTime = getHumanizedNumber(230000, 750000, 0.6, 5, 0.25);
                   console.log(`Waiting ${breakTime / 1000} seconds on random page`);
                   await timer(breakTime);
                 }
@@ -188,11 +188,11 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
 
           if (unfollowCount >= nextBreakCount) {
             console.log(`Taking a break after ${unfollowCount} unfollows`);
-            if (Math.random() < 0.7) {
+            if (Math.random() < 0.6) {
               await browseAndInteractOnInstagram(page);
             } else {
               await page.goto(url.urlRandom);
-              const breakTime = getHumanizedNumber(230000, 750000, 0.8, 6, 0.4);
+              const breakTime = getHumanizedNumber(230000, 750000, 0.8, 4, 0.2);
               console.log(`Waiting ${breakTime / 1000} seconds on profile page`);
               await timer(breakTime);
             }

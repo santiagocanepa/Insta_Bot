@@ -50,6 +50,8 @@ async function main(browser: Browser, page: Page): Promise<void> {
   // Estas líneas no deberían cerrarse automáticamente si no se ha completado la acción
   await page.close();
   await browser.close();
+  process.exit(1)
+
 }
 
 export default main;

@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer'
-import { selectors } from '../../constants/selectors.js'
+import { selectors, credentials } from '../../constants/selectors.js'
 import { getHumanizedWaitTime, getHumanizedNumber } from './timeUtils.js'
 import{ ScrollPage } from '../Utils/scrollUtils.js'
 import { handleLikes } from './LikesFeedForInteraction.js';
@@ -46,7 +46,7 @@ async function timer(ms: number) {
 
 
     
-  if (Math.random() < 0.15) {
+  if (Math.random() < credentials.probFeedOrStory) {
   
     while (Date.now() < endTime) {
       await getHumanizedWaitTime(400, 4300, 0.7, 5);
