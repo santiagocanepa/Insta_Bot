@@ -17,9 +17,9 @@ export const selectors = {
 
     //Follow
     followButton: 'div.x9f619 button._acan',
+    //unFollow    UnfollowProfileButton: 'div._ap3a._aaco._aacw._aad6._aade[dir="auto"]:contains("Following")', // Selector para "Following"
 
-    //unFollow
-    UnfollowProfileButton: 'div._ap3a._aaco._aacw._aad6._aade[dir="auto"]:contains("Following")', // Selector para "Following"
+    UnfollowProfileButton: 'div._ap3a._aaco._aacw._aad6._aade[dir="auto"]', // Selector para "Following"
     confirmUnfollowProfileButton: 'span.x1lliihq.x193iq5w.x6ikm8r.x10wlt62.xlyipyv.xuxw1ft', // Selector para "Unfollowing"
     unfollowListButton: 'div.xsz8vos[role="button"]',
     confirmUnfollowListButton: 'button._a9-_',
@@ -36,7 +36,7 @@ export const selectors = {
     //Follow Modals
     outerModalSelector: 'div[role="dialog"]',
     innerModalSelectorF: 'div.xyi19xy.x1ccrb07.xtf3nb5.x1pc53ja.x1lliihq.x1iyjqo2.xs83m0k.xz65tgg.x1rife3k.x1n2onr6',
-    innerModalSelectorPhoto: 'div.x9f619.xjbqb8w.x78zum5.x168nmei.x13lgxp2.x5pf9jr.xo71vjh.x1uhb9sk',
+    innerModalSelectorPhoto: 'div.x9f619.xjbqb8w.x78zum5.x168nmei.x13lgxp2.x5pf9jr.xo71vjh.x1uhb9sk.xeuugli div[style*="overflow: hidden auto"]',
 
         //Interaction
     ButtonLikes: 'svg[aria-label="Like"]',

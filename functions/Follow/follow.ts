@@ -67,62 +67,58 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
     }
   }
 
-  await page.waitForSelector(outerModalSelector, { visible: true, timeout: 5000 })
-  await page.waitForSelector(innerModalSelector, { visible: true, timeout: 5000 })
-
+  await page.waitForSelector(outerModalSelector, { visible: true, timeout: 10000 })
+  await page.waitForSelector(innerModalSelector, { visible: true, timeout: 10000 })
 
   let followCount = 0
-  let nextBreakCount = getHumanizedNumber(7, 13)
+  let nextBreakCount = getHumanizedNumber(7, 14, 0.8, 1, 0)
 
   do {
-    const { followButtons, usernames, descriptions, verifiedStatuses } = await extractUsers(page, innerModalSelector);
-    const { newFollowButtons, newUsernames, newDescriptions, newVerifiedStatuses } = filterNewUsers(usernames, followButtons, descriptions, verifiedStatuses, processedUsernames);
-  
+    const { followButtons, usernames, descriptions, verifiedStatuses } = await extractUsers(page, innerModalSelector)
+    const { newFollowButtons, newUsernames, newDescriptions, newVerifiedStatuses } = filterNewUsers(usernames, followButtons, descriptions, verifiedStatuses, processedUsernames)
+
     if (newFollowButtons.length === 0) {
-      let scrolled = await scrollModal(page, outerModalSelector, innerModalSelector);
-      console.log(`Scrolled: ${scrolled}`);
-      await getHumanizedWaitTime(350, 3200, 0.5, 1.6, 0.15); // Espera 
-      continue;
+      let scrolled = await scrollModal(page, outerModalSelector, innerModalSelector)
+      console.log(`Scrolled: ${scrolled}`)
+      await getHumanizedWaitTime(350, 3200, 0.5, 1.6, 0.15) // Espera 
+      continue
     }
-    
-  
+
     try {
       for (let i = 0; i < newFollowButtons.length; i++) {
         if (checkDailyLimit(dailyFollowsPath, followLimit)) {
-          console.log(`Se ha llegado al límite de follows diarios (${followLimit}). Terminando el bot.`);
-          process.exit(1);
+          console.log(`Se ha llegado al límite de follows diarios (${followLimit}). Terminando el bot.`)
+          process.exit(1)
         }
-  
-        const btn = newFollowButtons[i];
-        const username = newUsernames[i];
-        const description = newDescriptions[i] ? newDescriptions[i]!.split(' ')[0] : 'No description';
-        const verified = newVerifiedStatuses[i];
-  
-        console.log(`User: ${username}, Name: ${description}, Verified: ${verified}`);
-  
+
+        const btn = newFollowButtons[i]
+        const username = newUsernames[i]
+        const description = newDescriptions[i] ? newDescriptions[i]!.split(' ')[0] : 'No description'
+        const verified = newVerifiedStatuses[i]
+
+        console.log(`User: ${username}, Name: ${description}, Verified: ${verified}`)
+
         if (verified) {
-          console.log(`${username} es una cuenta verificada, saltando...`);
-          continue;
+          console.log(`${username} es una cuenta verificada, saltando...`)
+          continue
         }
-  
+
         if (usernamesNoFollow.has(username)) {
-          console.log(`${username} ya procesado, saltando...`);
-          continue;
+          console.log(`${username} ya procesado, saltando...`)
+          continue
         }
 
-        const embeddingResult = genero_buscado !== 2 ? await embedding(description) : 2; // Si genero_buscado es 2, asigna directamente 2 a embeddingResult
+        const embeddingResult = genero_buscado !== 2 ? await embedding(description) : 2 // Si genero_buscado es 2, asigna directamente 2 a embeddingResult
         console.log(`Embedding result for ${username}: ${embeddingResult}`)
-
 
         usernamesNoFollow.add(username)
         saveusersFollowingAndGenderchek(username)
-        
+
         if (genero_buscado === 2 || embeddingResult === genero_buscado) {
-//          await btn.click()
           await clickFollowUser(browser, username)
           console.log(`Siguiendo a ${username}`)
           followCount++
-          
+
           updateDailyCount(dailyFollowsPath) // Actualizar el recuento diario de follows
 
           saveUsernameOnlyFollow(username)
@@ -130,24 +126,35 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
           if (followCount >= nextBreakCount) {
             console.log(`Tomando un descanso después de ${followCount} follows`)
             if (Math.random() < 0.4) {
-              await browseAndInteractOnInstagram(page);}
-            else {
+              await browseAndInteractOnInstagram(page)
+            } else {
               await page.goto(url.urlRandom) // Redirigir a pagina random
-              const breakTime = getHumanizedNumber(230000, 750000, 0.8, 4, 0.2) // Esperar 
+              const breakTime = getHumanizedNumber(230000, 730000, 0.8, 4, 0.2) // Esperar 
               console.log(`Esperando ${breakTime / 1000} segundos en la página de perfil`)
-              await timer(breakTime) 
+              await timer(breakTime)
             }
 
             followCount = 0
-            nextBreakCount = getHumanizedNumber(7, 14,0.8,1,0) // Nuevo rango para el siguiente descanso
+            nextBreakCount = getHumanizedNumber(7, 14, 0.8, 1, 0) // Nuevo rango para el siguiente descanso
 
             // Seleccionar la URL correcta después del descanso
             const returnUrl = action === 'photo' ? url.photoUrl : url.followUrl
             await page.goto(returnUrl)
             await getHumanizedWaitTime()
 
-            // Si no es acción 'photo', manejar el clic en el botón
-            if (action !== 'photo') {
+
+            // Manejar el clic en el botón según la acción
+            if (action === 'photo') {
+              await page.evaluate(() => {
+                const buttons = document.querySelectorAll('a span')
+                for (const button of buttons) {
+                  if (button.textContent && /personas más|others|likes/.test(button.textContent)) {
+                    (button as HTMLElement).click()
+                    break
+                  }
+                }
+              })
+            } else {
               const button = await page.$(buttonSelector!)
               if (button) {
                 await button.click()
@@ -159,9 +166,8 @@ export async function * followGenerator (browser: Browser, page: Page, action: '
 
             await page.waitForSelector(outerModalSelector, { visible: true, timeout: 5000 })
             await page.waitForSelector(innerModalSelector, { visible: true, timeout: 5000 })
-
           } else {
-            const waitTime = getHumanizedNumber(4000,14000,0.6,5,0.4)
+            const waitTime = getHumanizedNumber(4000, 14000, 0.6, 5, 0.4)
             console.log(`Esperando ${waitTime / 1000} segundos antes de proceder con el siguiente usuario`)
             await timer(waitTime)
           }

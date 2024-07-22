@@ -23,7 +23,7 @@ export async function clickFollowUser(browser: Browser, username: string): Promi
     if (button && button.asElement()) {
       await (button.asElement() as puppeteer.ElementHandle).click();
       console.log(`Clicked Follow button for ${username}`);
-      await getHumanizedWaitTime(900,3800,0.7,2,0.35)
+      await getHumanizedWaitTime(3200,6800,0.7,2,0.35)
 
     } else {
       console.log(`Follow button not found for ${username}`);
