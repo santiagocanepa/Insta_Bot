@@ -46,7 +46,7 @@ async function timer(ms: number) {
 
 
     
-  if (Math.random() < 0) {
+  if (Math.random() < 0.15) {
   
     while (Date.now() < endTime) {
       await getHumanizedWaitTime(400, 4300, 0.7, 5);

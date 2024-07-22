@@ -1,33 +1,35 @@
-import { Page, Browser } from 'puppeteer'
-import { GeneratorType } from '../../constants/types.js'
-import { selectors, url } from '../../constants/selectors.js'
-import { getusersFollowingChekAndFollowers, saveusersFollowingAndGenderchek, updateDailyCount, checkDailyLimit, getUsernamesOnlyFollow } from '../Utils/jsonUtils.js'
-import { scrollModal } from '../Utils/scrollUtils.js'
-import { extractUsers, filterNewUsers } from './userUtils.js'
-import { getHumanizedWaitTime, getHumanizedNumber, timer } from '../Utils/timeUtils.js'
-import { checkUnfollow } from './checkunfollow.js'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { browseAndInteractOnInstagram } from '../Utils/interaction.js'
+import { Page, Browser } from 'puppeteer';
+import { GeneratorType } from '../../constants/types.js';
+import { selectors, url } from '../../constants/selectors.js';
+import { getusersFollowingChekAndFollowers, getUsersRequestPendientes, getUserUnfollowed, saveusersFollowingAndGenderchek, updateDailyCount, checkDailyLimit, getUsernamesOnlyFollow } from '../Utils/jsonUtils.js';
+import { scrollModal } from '../Utils/scrollUtils.js';
+import { extractUsers, filterNewUsers } from './userUtils.js';
+import { getHumanizedWaitTime, getHumanizedNumber, timer } from '../Utils/timeUtils.js';
+import { checkUnfollow } from './checkunfollow.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { browseAndInteractOnInstagram } from '../Utils/interaction.js';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const { actionsSelectors } = selectors
+const { actionsSelectors } = selectors;
 
-const outerModalSelector = actionsSelectors.outerModalSelector
-const innerModalSelector = actionsSelectors.innerModalSelectorF
+const outerModalSelector = actionsSelectors.outerModalSelector;
+const innerModalSelector = actionsSelectors.innerModalSelectorF;
 
-const usernamesUnfollowed = new Set(getusersFollowingChekAndFollowers())
-const processedUsernames = new Set<string>()
+const usersFollowingChekAndFollowers = new Set(getusersFollowingChekAndFollowers());
+const UsersRequestPendientes = Object.values(getUsersRequestPendientes()).flat(); // llamar getUsersRequestPendientes recordando que es formato diccionario
+const UserUnfollowed = new Set(getUserUnfollowed());
+const processedUsernames = new Set<string>();
 
-const dailyUnfollowsPath = path.resolve(__dirname, '../../dailyunfollows.json') 
-const unfollowLimit = 100 
+const dailyUnfollowsPath = path.resolve(__dirname, '../../dailyunfollows.json');
+const unfollowLimit = 100;
 
 function getDateKey(daysAgo: number): string {
-  const date = new Date()
-  date.setDate(date.getDate() - daysAgo)
-  return date.toLocaleDateString('es-ES') // Formato DD/MM/AAAA
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toLocaleDateString('es-ES'); // Formato DD/MM/AAAA
 }
 
 export async function* unfollowGenerator(browser: Browser, page: Page, subAction: 'all' | 'recent', daysAgo?: number): AsyncGenerator<GeneratorType, void, void> {
@@ -77,8 +79,18 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
 
             const username = newUsernames[i];
 
-            if (usernamesUnfollowed.has(username)) {
+            if (usersFollowingChekAndFollowers.has(username)) {
               console.log(`User ${username} already processed, skipping...`);
+              continue;
+            }
+
+            if (UsersRequestPendientes.includes(username)) {
+              console.log(`User ${username} has a pending request, skipping...`);
+              continue;
+            }
+
+            if (UserUnfollowed.has(username)) {
+              console.log(`User ${username} already unfollowed, skipping...`);
               continue;
             }
 
@@ -148,8 +160,18 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
           process.exit(1);
         }
 
-        if (usernamesUnfollowed.has(username)) {
+        if (usersFollowingChekAndFollowers.has(username)) {
           console.log(`User ${username} already processed, skipping...`);
+          continue;
+        }
+
+        if (UsersRequestPendientes.includes(username)) {
+          console.log(`User ${username} has a pending request, skipping...`);
+          continue;
+        }
+
+        if (UserUnfollowed.has(username)) {
+          console.log(`User ${username} already unfollowed, skipping...`);
           continue;
         }
 
@@ -189,6 +211,7 @@ export async function* unfollowGenerator(browser: Browser, page: Page, subAction
     console.error('Error in unfollowGenerator:', error);
     await page.close();
     await browser.close();
-    throw error;
+    
+    process.exit(1);
   }
 }

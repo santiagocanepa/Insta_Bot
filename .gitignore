@@ -4,7 +4,7 @@ cookies.json
 .env
 Embeddings/.env
 Embeddings/envnew
-
+dist/functions/Utils
 **/envnew
 dist/constants
 dist/functions/Follow
@@ -14,3 +14,4 @@ dist/functions/**.js
 README3.md
 Embeddings/data_prep/.CSV
 Embeddings/xgboost
+Embeddings/data_prep

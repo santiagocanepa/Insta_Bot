@@ -1,6 +1,6 @@
 import { Page, Browser } from 'puppeteer';
 import { selectors, credentials, url } from '../../constants/selectors.js';
-import { saveusersFollowingChekAndFollowers } from '../Utils/jsonUtils.js';
+import { saveusersFollowingChekAndFollowers, saveUserRequestPendiente, saveUserUnfollowed } from '../Utils/jsonUtils.js';
 import { getHumanizedWaitTime } from '../Utils/timeUtils.js';
 
 const { actionsSelectors } = selectors;
@@ -28,19 +28,34 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
       await page.waitForSelector(unfollowButtonSelector, { timeout: 15000 });
       const buttons = await page.$$(unfollowButtonSelector);
       
+      let buttonFound = false;
       for (const button of buttons) {
         const text = await page.evaluate(element => element.textContent, button);
         if (text && text.trim() === 'Following') {
           console.log('Botón de unfollow encontrado');
-          // Aquí puedes añadir la lógica para interactuar con el botón
+          buttonFound = true;
           break;
+        } else if (text && text.trim() === 'Requested') {
+          console.log(`Solicitud pendiente para el usuario ${username}`);
+          saveUserRequestPendiente(username);
+          await page.close();
+          return false; // Salir de la función si se encuentra una solicitud pendiente
         }
+      }
+      
+      if (!buttonFound) {
+        console.log(`No se pudo encontrar el botón de unfollow en el perfil de ${username}`);
+        saveUserUnfollowed(username);
+        await page.close();
+        return false; // Salir de la función si no se encuentra el botón de unfollow
       }
     } catch (error) {
       console.log(`No se pudo encontrar el botón de unfollow en el perfil de ${username} en 15 segundos`);
+      saveUserUnfollowed(username);
       await page.close();
       return false; // Salir de la función si no se encuentra el botón de unfollow
     }
+
 
     // Verificar la existencia del botón de followings
     try {
@@ -74,10 +89,17 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
     }
 
     // Cerrar la modal de seguidores
-    const closeButton = await page.$('button[aria-label="Close"]');
+    const closeButton = await page.$('button[type="button"] svg[aria-label="Close"]');
     if (closeButton) {
-      await closeButton.click();
+      await page.evaluate(el => {
+        const button = el.parentElement;
+        if (button) {
+          button.click();
+        }
+      }, closeButton);
     }
+
+
     await getHumanizedWaitTime(900, 3800, 0.5, 2, 0.35);
 
     // Click en el botón de Unfollow
@@ -103,6 +125,7 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
         if (confirmUnfollowButton) {
           // Evaluar clic en el contexto de la página
           await page.evaluate(button => (button as unknown as HTMLElement).click(), confirmUnfollowButton);
+          saveUserUnfollowed(username);
           console.log(`El usuario ${username} ha sido dejado de seguir`);
           await getHumanizedWaitTime(2200, 5700, 0.7, 2, 0.1);
           // Espera después de hacer clic en el botón de unfollow
@@ -115,12 +138,11 @@ export async function checkUnfollow(browser: Browser, username: string): Promise
         console.log(`No se pudo encontrar el botón de dejar de seguir para ${username}`);
       }
     }
-      await page.close();
-      return true; // No hacer unfollow en caso de fallo
-    } catch (error) {
-      console.error(`Error processing user ${username}:`, error);
-      await page.close();
-      return true; // No hacer unfollow en caso de fallo
-    }
- 
+    await page.close();
+    return true; // No hacer unfollow en caso de fallo
+  } catch (error) {
+    console.error(`Error processing user ${username}:`, error);
+    await page.close();
+    return true; // No hacer unfollow en caso de fallo
   }
+}
