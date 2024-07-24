@@ -112,7 +112,6 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
 
     const username = await extractUsername();
     if (!username) {
-      console.log("No se pudo extraer el nombre de usuario.");
       continue;
     }
 
@@ -129,7 +128,6 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
     } else {
       // La lógica existente solo se ejecutará si el username no incluye "Sponsored"
       if (NoLikeStoryList.includes(username)) {
-        console.log(`Usuario ${username} ya está en NoLikeStoryList.`);
       } else {
         // Comprobar si el usuario ya ha sido registrado hoy
         if (!DayLikeStoryList[dateKey].includes(username)) {
@@ -138,7 +136,6 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
             await clickLikeButton();
           }
           DayLikeStoryList[dateKey].push(username);
-          console.log(`Añadido ${username} a DayLikeStoryList.`);
           saveListToFile(DayLikeStoryList, dayLikeStoryListPath);
         }
       }

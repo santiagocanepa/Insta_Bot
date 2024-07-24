@@ -16,7 +16,6 @@ export async function handleLikes(page: Page, reviewedButtonsArray: string[], ne
       return ariaLabel && (ariaLabel.toLowerCase().includes('me gusta') || ariaLabel.toLowerCase().includes('like'));
     });
 
-    console.log('Botones de like válidos encontrados:', validLikeButtons.length);
     let clicked = false;
 
     for (let i = 0; i < validLikeButtons.length; i++) {
@@ -24,7 +23,6 @@ export async function handleLikes(page: Page, reviewedButtonsArray: string[], ne
       const svgElementId = `${svgElement.getAttribute('aria-label')}-${i}`; // Usamos aria-label + índice para identificación única
 
       if (reviewedButtons.has(svgElementId)) {
-        console.log('Elemento SVG ya revisado:', svgElementId);
         continue;
       }
 
@@ -40,7 +38,6 @@ export async function handleLikes(page: Page, reviewedButtonsArray: string[], ne
           reviewedButtons.add(svgElementId); // Añadir el elemento revisado al conjunto
           break; // Romper el bucle si se ha hecho clic
         } else {
-          console.log('Probabilidad no cumplida, no se hace clic.');
           reviewedButtons.add(svgElementId); // Añadir el elemento revisado al conjunto
         }
       } else {
@@ -48,7 +45,6 @@ export async function handleLikes(page: Page, reviewedButtonsArray: string[], ne
         reviewedButtons.add(svgElementId); // Añadir el elemento revisado al conjunto
       }
     }
-    console.log('Botones revisados:', Array.from(reviewedButtons));
     return { clicked, reviewedButtons: Array.from(reviewedButtons) };
   }, ButtonLikes, Array.from(reviewedButtonsArray)); // Usamos el selector definido en selectors y pasamos el conjunto de elementos revisados
 
@@ -56,7 +52,6 @@ export async function handleLikes(page: Page, reviewedButtonsArray: string[], ne
     nextLikeTime = Date.now() + getHumanizedNumber(5000, 30000, 0.6, 3);
   }
 
-  console.log('Reviewed buttons después de la evaluación:', result.reviewedButtons);
 
   return {
     nextLikeTime,
