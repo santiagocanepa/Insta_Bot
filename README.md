@@ -44,14 +44,8 @@ python app.py
 
 ### Instagram Bot
 
-1. **Install dependencies:**  
-   After navigating to the `InstaBot` directory, run:
 
-```bash
-pnpm install
-```
-
-2. **Configure environment variables:**  
+1. **Configure environment variables:**  
    Complete the `.env` file with the following template:
 
 ```plaintext
@@ -75,6 +69,15 @@ PROB_INTERACTIONS=
 # Value between 0 and 1: 0 = Never, 1 = Always. Example: 0.15 means 15% probability.
 PROB_FEED_OR_STORIES=
 ```
+
+2. **Install dependencies:**  
+   After navigating to the `InstaBot` directory, run:
+
+```bash
+pnpm install
+```
+
+
 
 3. **Start the bot:**  
    Run the following command to initialize the bot:
