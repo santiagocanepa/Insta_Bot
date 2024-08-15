@@ -36,6 +36,32 @@ const saveListToFile = (list: object, filePath: string) => {
   fs.writeFileSync(filePath, JSON.stringify(list, null, 2));
 };
 
+// Nueva función para clickear el botón "Like" dentro del modal
+const clickModalLikeButton = async (page: Page): Promise<boolean> => {
+  return await page.evaluate(() => {
+    const heights = ['737px', '864px', '900px']; // Ajusta según las alturas posibles del modal
+    let modalContainer: HTMLDivElement | null = null;
+
+    for (const height of heights) {
+      modalContainer = document.querySelector(`div[style*="height: ${height};"]`) as HTMLDivElement;
+      if (modalContainer) break;
+    }
+
+    if (modalContainer) {
+      // Buscar el botón de Like dentro del modal
+      const likeButton = modalContainer.querySelector('svg[aria-label="Like"]');
+      if (likeButton) {
+        const buttonAncestor = likeButton.closest('div[role="button"]');
+        if (buttonAncestor) {
+          (buttonAncestor as HTMLElement).click();
+          return true; // Botón clickeado
+        }
+      }
+    }
+    return false; // No se encontró el botón Like en el modal
+  });
+};
+
 const LikesStoryForInteraction = async (page: Page, endTime: number) => {
   const dateKey = getCurrentDate();
 
@@ -63,18 +89,6 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
       return null;
     });
     return username;
-  };
-
-  const clickLikeButton = async () => {
-    await page.evaluate(() => {
-      const likeSVGs = document.querySelectorAll('svg[aria-label="Like"]');
-      likeSVGs.forEach(svg => {
-        const buttonAncestor = svg.closest('[role="button"]');
-        if (buttonAncestor) {
-          (buttonAncestor as HTMLElement).click();
-        }
-      });
-    });
   };
 
   const clickNextButton = async (): Promise<boolean> => {
@@ -132,8 +146,13 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
         // Comprobar si el usuario ya ha sido registrado hoy
         if (!DayLikeStoryList[dateKey].includes(username)) {
           // Definir probabilidad de dar like
-          if (Math.random() < 0.15) {
-            await clickLikeButton();
+          if (Math.random() < 0.2) {
+            const likeClicked = await clickModalLikeButton(page);
+            if (likeClicked) {
+              console.log(`Like dado a ${username}.`);
+            } else {
+              console.log(`No se pudo dar Like a ${username}.`);
+            }
           }
           DayLikeStoryList[dateKey].push(username);
           saveListToFile(DayLikeStoryList, dayLikeStoryListPath);
@@ -150,6 +169,6 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
       await getHumanizedWaitTime();
     }
   }
-    };
+};
 
-    export { LikesStoryForInteraction };
+export { LikesStoryForInteraction };

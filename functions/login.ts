@@ -1,7 +1,6 @@
 import puppeteer, { Browser, Page } from 'puppeteer'
 import { existsSync } from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
-
 import { selectors, credentials, paths, url } from '../constants/selectors.js'
 import { puppeteerOptions } from '../constants/options.js'
 import { timer, getHumanizedWaitTime } from './Utils/timeUtils.js'
@@ -14,7 +13,7 @@ async function loadCookies (page: Page): Promise<void> {
     await page.setCookie(...cookies)
   }
   await page.goto(url.mainUrl)
-  await getHumanizedWaitTime()
+  await getHumanizedWaitTime(10000, 25000)
 }
 
 async function saveCookies (page: Page): Promise<void> {
@@ -23,20 +22,20 @@ async function saveCookies (page: Page): Promise<void> {
 }
 
 async function login (page: Page): Promise<void> {
-  await page.waitForSelector(loginSelectors.usernameInput, { timeout: 5000, visible: true }).then(async () => {
+  await page.waitForSelector(loginSelectors.usernameInput, { timeout: 15000, visible: true }).then(async () => {
     await page.type(loginSelectors.usernameInput, credentials.username)
     await page.type(loginSelectors.passwordInput, credentials.password)
     await page.keyboard.press('Enter')
     await getHumanizedWaitTime()
   })
-  const isSuccessfully = await page.waitForSelector(loginSelectors.isLoginSelector, { timeout: 5000, visible: true })
+  const isSuccessfully = await page.waitForSelector(loginSelectors.isLoginSelector, { timeout: 15000, visible: true })
   if (!isSuccessfully) throw new Error('Login failed')
   await saveCookies(page)
 }
 
 async function isLogin (page: Page): Promise<void> {
   try {
-    await page.waitForSelector(loginSelectors.isLoginSelector, { timeout: 5000, visible: true })
+    await page.waitForSelector(loginSelectors.isLoginSelector, { timeout: 15000, visible: true })
   } catch (err) {
     await login(page)
   }

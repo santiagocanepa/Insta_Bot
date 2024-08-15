@@ -9,6 +9,7 @@ const height = parseInt(process.env.HEIGHT || '1440', 10);
 export const puppeteerOptions = {
   headless: false,
   slowMo: 50,
+  executablePath: '/usr/bin/google-chrome-stable',
   args: [
     '--lang=en-US',
     `--user-agent=${userAgent}`,

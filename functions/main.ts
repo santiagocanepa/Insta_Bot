@@ -6,6 +6,7 @@ import { unfollowGenerator } from './Unfollow/unfollow.js';
 import { browseAndInteractOnInstagram } from './Utils/interaction.js';
 
 async function main(browser: Browser, page: Page): Promise<void> {
+  
   const { action, subAction, genero_buscado, daysAgo } = await selectAction(browser, page);
   let generator;
 

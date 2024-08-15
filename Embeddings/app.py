@@ -10,7 +10,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/predict_gender', methods=['POST'])
-def handle_predict_gender():
+def predict_gender():
     data = request.get_json()
     nombre_usuario = data['nombre_usuario']
     try:
