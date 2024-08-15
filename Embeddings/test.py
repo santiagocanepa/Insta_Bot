@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 # Cargar el CSV con los datos de prueba
-df_test = pd.read_csv('/home/santiago/Bots/Insta/Insta_Bot/Embeddings/Models/X_y_test_with_embeddings.csv')
+df_test = pd.read_csv('/home/santiago/Bots/Insta/Insta_Bot/Embeddings/dataprep/X_y_test_with_embeddings.csv')
 
 
 # Seleccionar 120 datos aleatorios
