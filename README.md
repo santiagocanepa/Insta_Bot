@@ -109,6 +109,17 @@ Select follow type:
  3. Photo
 ```
 
+#### Follow Options:
+
+```plaintext
+Select gender: 
+ 0. Men 
+ 1. Women 
+ 2. All 
+ 3. Businesses 
+```
+   - **All:** It doesn't use the model, it follows all the users on the list.
+
 #### Unfollow Options:
 
 ```plaintext
