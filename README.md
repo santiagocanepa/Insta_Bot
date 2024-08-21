@@ -180,16 +180,11 @@ Select unfollow type:
 - `label_encoderWords.pkl`: Label encoder for the word model.
 - `label_encoderGeneros.pkl`: Label encoder for the gender model.
 
+To observe the training of the models visit the jupyter notebook on kaggle (https://www.kaggle.com/code/ivancanepa/model-gender-classifier)
 ### Instagram Bot
 - `.env`: Environment variables for configuring the Instagram bot.
 - `index.ts`: Main entry point for the bot.
 - Various utility files for managing different aspects of the bot's functionality.
-
----
-
-## 📜 **License**
-
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
 
 ---
 
