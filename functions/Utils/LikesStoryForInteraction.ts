@@ -93,12 +93,30 @@ const LikesStoryForInteraction = async (page: Page, endTime: number) => {
 
   const clickNextButton = async (): Promise<boolean> => {
     return await page.evaluate(() => {
-      const nextButton = document.querySelector('button[aria-label="Next"]') as HTMLElement;
-      if (nextButton) {
+      try {
+        // Buscar el SVG primero
+        const nextSvg = document.querySelector('svg[aria-label="Next"]');
+        if (!nextSvg) {
+          console.log('SVG con aria-label="Next" no encontrado');
+          return false;
+        }
+        
+        // Si el SVG se encuentra, buscar el elemento div con role="button" más cercano
+        const nextButton = nextSvg.closest('div[role="button"]') as HTMLElement;
+        if (!nextButton) {
+          console.log('Botón contenedor no encontrado');
+          return false;
+        }
+        
+        // Intentar hacer click
+        console.log('Botón Next encontrado, intentando hacer click...');
         nextButton.click();
+        console.log('Click realizado correctamente');
         return true;
+      } catch (error) {
+        console.log('Error al intentar hacer click en Next:', error);
+        return false;
       }
-      return false;
     });
   };
 

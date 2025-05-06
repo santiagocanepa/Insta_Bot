@@ -1,9 +1,9 @@
 node_modules
 cookies.json
 Embeddings/.env
-Embeddings/envnew
+Embeddings/venv
 dist/functions/Utils
-**/envnew
+**/venv
 dist/constants
 dist/functions/Follow
 dist/functions/Unfollow
@@ -12,3 +12,4 @@ dist/functions/**.js
 README3.md
 Embeddings/xgboost
 dataprep
+**/.env

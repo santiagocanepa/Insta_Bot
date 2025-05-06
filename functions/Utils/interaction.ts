@@ -66,7 +66,7 @@ async function timer(ms: number) {
   else{
     while (Date.now() < endTime) {
       const labelText = 'Story'; // Parte del texto estático que deseas buscar
-      const ButtonStorySelector = 'button[aria-label*="Story"]';
+      const ButtonStorySelector = '[aria-label*="Story"]';
       // Espera a que se carguen los botones
       await getHumanizedWaitTime(3100, 4800, 0.7, 5);
 

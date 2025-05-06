@@ -2,27 +2,27 @@ USERNAME=''
 PASSWORD=''
 
 #username to scrape followers and followers
-USER_TO_FOLLOW='santiilyardet'
+USER_TO_FOLLOW=''
 
 #following or followers
-FOLLOWERS_OR_FOLLOWING='following'
+FOLLOWERS_OR_FOLLOWING=''
 
 #Photo link to race leader
 PHOTO= ''
 
-OPENAI_API_KEY='sk-proj-mHXg34dgL6yBsq30NpvY_T_UHm9RP7yJVpUCINyLSt0ChcFQ0XeS6LAIJow0pBy68pU_jo-0GFT3BlbkFJM1rYM2ivCN'
+OPENAI_API_KEY=
 
-USERAGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
-WIDTH=1366
-HEIGHT=768
+USERAGENT=''
+WIDTH=
+HEIGHT=
 
 
 
 
 # Probability of performing interactions (Likes on Feed or Stories) during breaks.
 # Value between 0 and 1: 0 = Never, 1 = Always. Example: 0.15 means 15% probability.
-PROB_INTERACTIONS=1
+PROB_INTERACTIONS=0.15
 
 # Probability of going to Feed or Stories.
 # Value between 0 and 1: 0 = Never, 1 = Always. Example: 0.15 means 15% probability.
-PROB_FEED_OR_STORIES=0
+PROB_FEED_OR_STORIES=0.15

@@ -15,6 +15,7 @@ async function main(browser: Browser, page: Page): Promise<void> {
       console.log('Invalid follow type selected.');
       return;
     }
+    
     generator = followGenerator(browser, page, subAction as 'followers' | 'following' | 'photo', genero_buscado);
   } else if (action === 'unfollow') {
     if (!subAction) {
